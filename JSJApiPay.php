@@ -66,7 +66,7 @@ function JSJApiPay_link($params) {
 	$systemurl = $params['systemurl'];
 	
 	#Special Variables
-	$img=$systemurl."/modules/gateways/callback/alipay.png";
+	$img=$systemurl."/modules/gateways/callback/img/ali_02.png";
 
 	$JSJApiPay_config['return_url'] = "http://修改为你的地址！！！！！！！/modules/gateways/callback/JSJApiPay_callback.php?act=return";
 	$JSJApiPay_config['api_url'] = "http://api.web567.net/plugin.php?id=add:alipay";
