@@ -20,7 +20,7 @@
 
 修改 JSJApiPay.php 的65行，为你自己的WHMCS回调地址。
 
-进入WHMCS后台，系统设置-付款-支付网关设置中：启用本接口，并填写APIID&APIKEY等，手续费仅用于WHMCS内部记账统计，但是必须填写（有手续费这么个特性，不会对实际支付金额产生影响）。
+进入WHMCS后台，系统设置-付款-支付网关-All Payment Gateways选项卡设置中：启用本接口，并在 Manage Existing Gateways 选项卡中填写APIID&APIKEY等，手续费仅用于WHMCS内部记账统计，但是必须填写（可以填0，WHMCS记账有手续费这么个特性，不会对实际支付金额产生影响）。
 
 完成√
 
