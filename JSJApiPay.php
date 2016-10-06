@@ -104,6 +104,7 @@ function JSJApiPay_link($params) {
     	);
 
     	$html_code="
+	    	<!-- Powered By api.web567.net , Coded By Tutugreen.com -->
     		<form name='JSJApiPay_form1' action='".$parameter['api_url']."' method='POST'>
     			<input type='hidden' name='addnum' value='".$parameter['addnum']."'>
     			<input type='hidden' name='total' value='".$parameter['amount']."'>
