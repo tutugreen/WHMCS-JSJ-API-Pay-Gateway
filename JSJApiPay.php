@@ -66,7 +66,7 @@ function JSJApiPay_link($params) {
 	$systemurl = $params['systemurl'];
 	
 	#Special Variables
-	$img=$systemurl."/modules/gateways/callback/alipay.png";
+	$img=$systemurl."/modules/gateways/img/ali_02.png";
 
 	
 	#请修改return_url为你自己WHMCS的地址，如：http://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?act=return
