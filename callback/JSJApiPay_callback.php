@@ -64,7 +64,9 @@ if($_GET['act']=='return' or $_GET['act']=='bd'){
     //手续费计算
     $fee        = $amount*$JSJApiPay_config['fee_acc'];
 
-	if($apikey!=md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){     //先验证下回调key,不正确让他跳转到首页去
+	if($apikey!=md5($JSJApiPay_config['apikey'].$incoming_addnum)){     //先验证下回调key,不正确让他跳转到首页去
+	//当前先按官方默认PHP对接的方式验证，如果官方能够设置一个新接口，那可能可以用下方的，就不会有任何问题了(#滑稽)
+	//md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
 	    logTransaction($GATEWAY["name"],$_POST,"Unsuccessfull-APIKEY-DENY");
 		header('location:/');
 	    exit;
