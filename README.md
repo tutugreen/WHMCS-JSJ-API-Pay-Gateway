@@ -44,4 +44,4 @@ Email：yuanming@tutugreen.com
 
 ## Copyright and license
 
-Copyright 2016 ZNTEC.CN. Code released under [the MIT license](https://github.com/babytomas/Shadowsocks-For-WHMCS/blob/master/LICENSE).
+Copyright 2016 Tutugreen.com. Code released under [the MIT license](https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gataway/blob/master/LICENSE).
