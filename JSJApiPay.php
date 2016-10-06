@@ -66,10 +66,21 @@ function JSJApiPay_link($params) {
 	$systemurl = $params['systemurl'];
 	
 	#Special Variables
-	$img=$systemurl."/modules/gateways/callback/img/ali_02.png";
+	$img=$systemurl."/modules/gateways/callback/alipay.png";
 
-	$JSJApiPay_config['return_url'] = "http://修改为你的地址！！！！！！！/modules/gateways/callback/JSJApiPay_callback.php?act=return";
+	
+	#请修改return_url为你自己WHMCS的地址，如：http://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?act=return
+	#请注意目前回调不支持HTTPS（API无法返回HTTPS，用户可以返回），所以请填写HTTP地址（不影响站点用户访问HTTPS。）
+	$JSJApiPay_config['return_url'] = "";
+	
+	
+	#以后可能会有专属的API接口(可能吧。)
 	$JSJApiPay_config['api_url'] = "http://api.web567.net/plugin.php?id=add:alipay";
+	
+	#这边不用改，写个判断防止小白忘记。
+    	if ($JSJApiPay_config['return_url'] = "") {
+        	return "return_url未设置，请阅读接口说明文件！";
+	}
 
     	/*生成addnum参数:
         我们允许自定义订单传递过来，变量为 $_POST['addnum']  组合方式为 alip + 您的apiid + 自定义参数
