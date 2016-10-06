@@ -78,7 +78,7 @@ function JSJApiPay_link($params) {
 	$JSJApiPay_config['api_url'] = "http://api.web567.net/plugin.php?id=add:alipay";
 	
 	#这边不用改，写个判断防止小白忘记。
-    	if ($JSJApiPay_config['return_url'] = "") {
+    	if ($JSJApiPay_config['return_url'] == "") {
         	return "return_url未设置，请阅读接口说明文件！";
 	}
 
