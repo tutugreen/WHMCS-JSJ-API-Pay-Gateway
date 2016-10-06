@@ -16,7 +16,7 @@
 
 首先在金沙江API后台注册一个账户。
 
-下载本接口，并吧文件放到站点的/modules/gateways/里。
+下载本接口，并把文件放到站点的/modules/gateways/里。
 
 修改 JSJApiPay.php 的65行，为你自己的WHMCS回调地址。
 
