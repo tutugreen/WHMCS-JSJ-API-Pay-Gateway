@@ -89,7 +89,7 @@ function JSJApiPay_link($params) {
 		PS！请不要随意修改！后方回调也会验证。
 		*/
 
-        $JSJApiPay_config['addnum'] = "alip".$JSJApiPay_config['apiid']."WHMCSInvoces".$invoiceid;
+        $JSJApiPay_config['addnum'] = "alip".$JSJApiPay_config['apiid']."ALIPAYInvoces".$invoiceid;
 
     	//基本参数
     	$parameter = array(
