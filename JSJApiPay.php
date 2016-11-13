@@ -69,8 +69,8 @@ function JSJApiPay_link($params) {
 	$img=$systemurl."/modules/gateways/img/ali_02.png";
 
 	
-	#请修改return_url为你自己WHMCS的地址，如：http://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?act=return
-	#请注意目前回调不支持HTTPS（API无法返回HTTPS，用户可以返回），所以请填写HTTP地址（不影响站点用户访问HTTPS。）
+	#请修改return_url为你自己WHMCS的地址，如：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?act=return
+	#现已支持HTTPS地址-2016-11-13
 	$JSJApiPay_config['return_url'] = "";
 	
 	
