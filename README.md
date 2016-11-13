@@ -20,7 +20,7 @@
 
 下载本接口，并把文件放到站点的/modules/gateways/里。
 
-修改 JSJApiPay.php 的74行，为你自己的WHMCS回调地址。
+**修改 JSJApiPay.php 的74行，为你自己的WHMCS回调地址。**
 
 进入WHMCS后台，系统设置-付款-支付网关-All Payment Gateways选项卡设置中：启用本接口，并在 Manage Existing Gateways 选项卡中填写APIID&APIKEY等，手续费仅用于WHMCS内部记账统计，但是必须填写（可以填0，WHMCS记账有手续费这么个特性，不会对实际支付金额产生影响）。
 
@@ -28,7 +28,9 @@
 
 ## 说明
 
-最近更新:2016-11-03
+最近更新:2016-11-13
+
+**官方 现已支持HTTPS 回调地址**
 
 **请注意！官方已修改订单编号(addnum)参数编号规范，请在2016-11-03之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）**
 **如果在2016年11月10日0点整仍未更改的，接口将无法使用。(详情见：[官方贴](http://api.web567.net/forum.php?mod=viewthread&tid=52))**
