@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-首先在金沙江API后台注册一个账户。
+首先在金沙江API后台[注册一个账户](http://api.web567.net/plugin.php?id=add:user&apiid=12744&from=github)。
 
 下载本接口，并把文件放到站点的/modules/gateways/里。
 
@@ -49,6 +49,14 @@
 PS：如果你需要吧手续费分摊给用户，请参考这个插件：[WHMCS-Gateway-Fees](https://github.com/delta360/WHMCS-Gateway-Fees) （第三方），本插件不会额外添加手续费（建议使用插件在之前添加，不建议在网关支付时添加，会产生取整影响回调判断的问题。）
 
 （本来为自用，感觉金沙江提供的服务还是很不错的，所以公开了，请合理使用）
+
+## 常见问题
+
+Q：订单流水号存在"JSJApiPay"，是否可以修改？
+A：可以的，修改 callback/JSJApiPay_callback.php 第 62 行即可，请注意保持唯一性以防刷单。
+
+Q：如何修改用户支付完后跳转到的落地页面。
+A：编辑 callback/JSJApiPay_callback.php 第 82 行，可修改完成支付验证后的地址。
 
 ## 非本接口问题请联系
 
