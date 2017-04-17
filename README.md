@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-首先在金沙江API后台[注册一个账户](http://api.web567.net/plugin.php?id=add:user&apiid=12744&from=github)。
+首先在金沙江API后台[注册一个账户](//api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=github)。
 
 下载本接口，并把文件放到站点的/modules/gateways/里。
 
@@ -35,15 +35,17 @@
 
 2017-04-17：
 更新官方新域名，并支持HTTPS。
+**请注意！官方已修改接口域名，请在2017-04-17之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）**
+**如果在2017年04月17日0点整仍未更改的，接口将无法使用。
 
 **官方 现已支持HTTPS 回调地址**
 
 **请注意！官方已修改订单编号(addnum)参数编号规范，请在2016-11-03之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）**
-**如果在2016年11月10日0点整仍未更改的，接口将无法使用。(详情见：[官方贴](http://api.web567.net/forum.php?mod=viewthread&tid=52))**
+**如果在2016年11月10日0点整仍未更改的，接口将无法使用。(详情见：[官方贴](//api.jsjapp.com/forum.php?mod=viewthread&tid=52))**
 
 代码仅供参考，有问题/BUG等请发Issue（请先确认您的WHMCS版本为6）。
 
-使用的API为金沙江API：http://api.web567.net/
+使用的API为金沙江API：http://api.jsjapp.com/
 
 依据金沙江官方PHP通用接口写的。未来官方有改动也会更新。
 
@@ -66,7 +68,7 @@ A：编辑 callback/JSJApiPay_callback.php 第 82 行，可修改完成支付验
 
 ## 非本接口问题请联系
 
-金沙江问题请去[官方板块](http://api.web567.net/forum.php?mod=forumdisplay&fid=36)咨询
+金沙江问题请去[官方板块](//api.jsjapp.com/forum.php?mod=forumdisplay&fid=36)咨询
 
 窝的Email：yuanming@tutugreen.com
 
