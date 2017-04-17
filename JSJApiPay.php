@@ -15,7 +15,7 @@ require_once("callback/JSJApiPay.class.php");
 function JSJApiPay_config() {
     $configarray = array(
      "FriendlyName" => array("Type" => "System", "Value"=>"金沙江支付宝免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
-     "apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在这里注册：http://api.web567.net/", ),
+     "apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在这里注册：http://api.jsjapp.com/", ),
      "apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
      "fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
      "debug" => array("FriendlyName" => "调试模式", "Type" => "yesno", "Description" => "调试模式,详细LOG请见[WHMCS]/download/JSJApiPay_log.php，使用文件管理或FTP等查看。", ),
@@ -37,7 +37,7 @@ function JSJApiPay_link($params) {
     }
 
     /********************************************************************************************************
-    POST页面，发送参数传递至 http://api.web567.net/plugin.php?id=add:alipay
+    POST页面，发送参数传递至 http://api.jsjapp.com/plugin.php?id=add:alipay
     传递需求参数说明：
     参数	含义	是否必须	
     $_POST['addnum']	订单编号：见下面的特别参数说明	可选	特别参数
