@@ -75,7 +75,7 @@ function JSJApiPay_link($params) {
 	
 	
 	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_config['api_url'] = "https://api.jsjapp.com//plugin.php?id=add:alipay";
+	$JSJApiPay_config['api_url'] = "//api.jsjapp.com//plugin.php?id=add:alipay";
 	
 	#这边不用改，写个判断防止小白忘记。
     	if ($JSJApiPay_config['return_url'] == "") {
