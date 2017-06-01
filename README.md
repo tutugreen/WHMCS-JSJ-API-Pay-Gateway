@@ -1,4 +1,4 @@
-# WHMCS-JSJ-API-Pay-Gataway
+# WHMCS-JSJ-API-Pay-Gateway
 
 为金沙江支付宝免签API写的WHMCS接口，难得的好接口。请合理使用。。
 
@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-首先在金沙江API后台[注册一个账户](//api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=github)。
+首先在金沙江API后台 [注册一个账户](//api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=github)。
 
 下载本接口，并把文件放到站点的/modules/gateways/里。
 
@@ -27,21 +27,6 @@
 完成√
 
 ## 说明
-
-最近更新:2016-11-18
-
-2016-11-18：
-修复回调非子目录，导致404的问题
-
-2017-04-17：
-更新官方新域名，并支持HTTPS。
-**请注意！官方已修改接口域名，请在2017-04-17之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）**
-**如果在2017年04月17日0点整仍未更改的，接口将无法使用。
-
-**官方 现已支持HTTPS 回调地址**
-
-**请注意！官方已修改订单编号(addnum)参数编号规范，请在2016-11-03之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）**
-**如果在2016年11月10日0点整仍未更改的，接口将无法使用。(详情见：[官方贴](//api.jsjapp.com/forum.php?mod=viewthread&tid=52))**
 
 代码仅供参考，有问题/BUG等请发Issue（请先确认您的WHMCS版本为6）。
 
@@ -54,6 +39,28 @@
 PS：如果你需要吧手续费分摊给用户，请参考这个插件：[WHMCS-Gateway-Fees](https://github.com/delta360/WHMCS-Gateway-Fees) （第三方），本插件不会额外添加手续费（建议使用插件在之前添加，不建议在网关支付时添加，会产生取整影响回调判断的问题。）
 
 （本来为自用，感觉金沙江提供的服务还是很不错的，所以公开了，请合理使用）
+
+## 更新日志
+
+最近更新:2017-06-01
+
+2017-06-01:
+修正一些注释错误
+
+2016-11-18：
+修复回调非子目录，导致404的问题
+
+2017-04-17：
+更新官方新域名，并支持HTTPS。
+请注意！官方已修改接口域名，请在2017-04-17之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）
+如果在2017年04月17日0点整仍未更改的，接口将无法使用。
+
+**官方现已支持 HTTPS 回调地址**
+
+2016-11-03:
+依据官方要求更新参数编号规范
+请注意！官方已修改订单编号(addnum)参数编号规范，请在2016-11-03之前下载接口的用户尽快更新代码（对支付和之前的订单无任何影响）
+如果在2016年11月10日0点整仍未更改的，接口将无法使用。(详情见：[官方贴](//api.jsjapp.com/forum.php?mod=viewthread&tid=52))
 
 ## 常见问题
 
@@ -74,4 +81,4 @@ A：编辑 callback/JSJApiPay_callback.php 第 82 行，可修改完成支付验
 
 ## Copyright and license
 
-Copyright 2016 Tutugreen.com. Code released under [the MIT license](https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gataway/blob/master/LICENSE).
+Copyright 2016~2017 Tutugreen.com. Code released under [the MIT license](https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway/blob/master/LICENSE).
