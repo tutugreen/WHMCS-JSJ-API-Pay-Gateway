@@ -4,10 +4,10 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016
+ * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.9-2016-10-07-01
- * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gataway
+ * @version    0.91-2017-06-01-01
+ * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
  
