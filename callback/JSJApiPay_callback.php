@@ -75,7 +75,6 @@ if ($api_pay_failed<>"true"){
 			$_POST['uid']    支付会员ID
 			$_POST['apikey'] 您的(apikey+订单号)小写md5加密，下文称之为回调key
 		********************************************/
-<<<<<<< HEAD
 
 		//参数获取
 		//自动判断POST/GET
@@ -137,16 +136,6 @@ if ($api_pay_failed<>"true"){
 			logTransaction($GATEWAY["name"],$_POST,"Successful-A");
 			echo "支付成功";
 		}
-=======
-	    if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 支付成功.");
-		//注意，如果你的WHMCS安装在其他目录或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
-	    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
-	    $invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
-	    checkCbTransID($transid);
-	    addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
-	    logTransaction($GATEWAY["name"],$_POST,"Successful-A");
-		echo "支付成功";
->>>>>>> origin/master
 	}
 }
 ?>
