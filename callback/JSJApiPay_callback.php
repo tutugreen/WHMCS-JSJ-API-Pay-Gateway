@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.11-2017-06-03-02
+ * @version    0.11-2017-06-03-03
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -23,6 +23,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     $incoming_payment_type = $_POST['payment_type'] ? $_POST['payment_type'] : $_GET['payment_type'];
     if ($incoming_payment_type == 'alipay_web'){
     	$gatewaymodule = "JSJApiPay_Alipay_Web";
+    } elseif ($incoming_payment_type == 'alipay_wap'){
+    	$gatewaymodule = "JSJApiPay_Alipay_Wep";
     } elseif ($incoming_payment_type == 'alipay_qrcode'){
     	$gatewaymodule = "JSJApiPay_Alipay_QRCode";
     } elseif ($incoming_payment_type == 'wechat_qrcode'){
@@ -97,7 +99,7 @@ if ($api_pay_failed<>"true"){
 
 		//官方支付宝接口与微信支付接口回调验证有所区别
 
-		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
+		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wep" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
 			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum)){
