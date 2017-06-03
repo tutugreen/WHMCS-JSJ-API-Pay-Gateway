@@ -69,12 +69,12 @@ PS：如果你需要吧手续费分摊给用户，请参考这个插件：[WHMCS
 
 Q：订单流水号存在"JSJApiPay"，是否可以修改？
 
-A：可以的，修改 callback/JSJApiPay_callback.php 第 62 行即可，请注意保持唯一性以防刷单。
+A：可以的，修改 callback/JSJApiPay_callback.php 第 91 行即可，请注意保持唯一性以防刷单。
 
 
 Q：如何修改用户支付完后跳转到的落地页面。
 
-A：编辑 callback/JSJApiPay_callback.php 第 82 行，可修改完成支付验证后的地址。
+A：编辑 callback/JSJApiPay_callback.php 第 132 行，可修改完成支付验证后的地址，默认为跳转到账单页面。
 
 ## 非本接口问题请联系
 
