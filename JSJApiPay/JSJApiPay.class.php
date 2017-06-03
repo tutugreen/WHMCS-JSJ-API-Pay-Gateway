@@ -1,12 +1,12 @@
 <?php
 /**
- * @WHMCS-JSJ-API-Pay-Gataway
+ * @WHMCS-JSJ-API-Pay-Gateway
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.91-2017-06-01-01
+ * @version    0.11-2017-06-03-02
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
