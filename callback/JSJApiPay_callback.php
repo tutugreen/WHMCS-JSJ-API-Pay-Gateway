@@ -79,7 +79,7 @@ if($_GET['act']=='return' or $_GET['act']=='bd'){
 		********************************************/
 	    if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 支付成功.");
 		//注意，如果你的WHMCS安装在其他目录或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
-	    header("location:../../../../viewinvoice.php?id=$invoiceid&from=paygateway");
+	    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
 	    $invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
 	    checkCbTransID($transid);
 	    addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
