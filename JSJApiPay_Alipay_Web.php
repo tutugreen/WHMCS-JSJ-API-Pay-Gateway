@@ -69,8 +69,8 @@ function JSJApiPay_Alipay_Web_link($params) {
 	
 	#Special Variables
 
-	#支付提示图片默认可选：ali_01.gif、ali_02.png、ali_03.png
-	$img = $systemurl . "/modules/gateways/JSJApiPay/img/ali_02.png";
+	#支付提示图片默认可选：Alipay_01.gif、Alipay_02.png、Alipay_03.png
+	$img = $systemurl . "/modules/gateways/JSJApiPay/img/Alipay_02.png";
 	
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return
 	#现已支持HTTPS地址-2016-11-13
