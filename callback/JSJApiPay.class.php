@@ -1,6 +1,6 @@
 <?php
 /**
- * @WHMCS-JSJ-API-Pay-Gataway
+ * @WHMCS-JSJ-API-Pay-Gateway
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
