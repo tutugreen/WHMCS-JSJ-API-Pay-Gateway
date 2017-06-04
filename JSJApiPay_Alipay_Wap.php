@@ -79,7 +79,7 @@ function JSJApiPay_Alipay_Wap_link($params) {
 	$JSJApiPay_Alipay_Wap_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_wap&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_Alipay_Wap_config['api_url'] = "//api.jsjapp.com//plugin.php?id=add:alipay_wap";
+	$JSJApiPay_Alipay_Wap_config['api_url'] = "//api.jsjapp.com/plugin.php?id=add:alipay_wap";
 
 	/*生成addnum参数:
 	自定义订单号码，自定义格式: 30 + 您的apiid + 最长20位数字 (比如：301234500112233445566)
