@@ -1,8 +1,8 @@
 # WHMCS-JSJ-API-Pay-Gateway
 
-为金沙江支付宝免签API写的WHMCS接口，难得的好接口。请合理使用。。
+为金沙江支付免签API写的WHMCS接口，难得的好接口。请合理使用。。
 
-本接口用于WHMCS与金沙江API接口对接，以完成支付宝免签支付。
+本接口用于WHMCS与金沙江API接口对接，以完成支付宝/微信免签支付。
 
 测试可用版本：WHMCS 6
 
@@ -20,7 +20,7 @@
 
 下载本接口，并把文件放到站点的/modules/gateways/里。
 
-进入WHMCS后台，系统设置-付款-支付网关-All Payment Gateways选项卡设置中：启用本接口，并在 Manage Existing Gateways 选项卡中填写APIID&APIKEY等，手续费仅用于WHMCS内部记账统计，但是必须填写（可以填0，WHMCS记账有手续费这么个特性，不会对实际支付金额产生影响）。
+进入WHMCS后台，系统设置-付款-支付网关-All Payment Gateways选项卡设置中：启用本接口（不同支付方式有独立配置），并在 Manage Existing Gateways 选项卡中填写APIID&APIKEY等，手续费仅用于WHMCS内部记账统计，但是必须填写（可以填0，WHMCS记账有手续费这么个特性，不会对实际支付金额产生影响）。
 
 完成√
 
@@ -87,6 +87,10 @@ A：可以的，修改 callback/JSJApiPay_callback.php 相应部分即可(已注
 Q：如何修改用户支付完后跳转到的落地页面。
 
 A：编辑 callback/JSJApiPay_callback.php 相应部分即可(已注释指出)，可修改完成支付验证后的地址，默认为跳转到账单页面。
+
+Q：部分支付方式需要审核（例如微信支付/QQ支付），如何开通？
+
+A：登陆金沙江API，账户管理下可以开通相应接口，请注意审核的回调域名填写正确，以免无法正确回调。
 
 ## 非本接口问题请联系
 

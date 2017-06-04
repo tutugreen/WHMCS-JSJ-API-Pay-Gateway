@@ -144,7 +144,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <!-- Jquery Polling Invoice & Check Result-->
 <div class="JSJApiPay_WeChat_Pay_QRCode" style="max-width: 240px;margin: 0 auto">
-	<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">
+	<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">
 		<!-- QRCode Should Be Display Here , Or Check Your Explorer Version.-->
 		<img src="{$QRCode_ICON_img}" style="position: absolute;top: 50%;left: 50%;width:57.5px;height:57.5px;margin-left: -28.75px;margin-top: -14.375px">
 	</div>
@@ -156,6 +156,9 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 		height	:	230,
 		text	:	'{$curl_create_qrcode_res_data}'
 	});	
+</script>
+<script>
+	$(function () { $("[data-toggle='tooltip']").tooltip({html : true }); });
 </script>
 <script>
 jQuery(document).ready(function() {
