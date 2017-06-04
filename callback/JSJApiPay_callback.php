@@ -27,8 +27,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     	$gatewaymodule = "JSJApiPay_Alipay_Wep";
     } elseif ($incoming_payment_type == 'alipay_qrcode'){
     	$gatewaymodule = "JSJApiPay_Alipay_QRCode";
-    } elseif ($incoming_payment_type == 'wechat_qrcode'){
-    	$gatewaymodule = "JSJApiPay_WeChat_QRCode";
+    } elseif ($incoming_payment_type == 'wechat_pay_qrcode'){
+    	$gatewaymodule = "JSJApiPay_WeChat_Pay_QRCode";
     } else {
     	if ($debug) {
     		$msg="[JSJApiPay]收到未知回调，payment_type 变量缺失或错误";
@@ -97,7 +97,7 @@ if ($api_pay_failed<>"true"){
 
 		//验证回调key
 
-		//官方支付宝接口与微信支付接口回调验证有所区别
+		//官方支付宝WEB接口、支付宝WAP接口与微信支付接口回调验证和订单组合有所区别
 
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wep" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
@@ -107,7 +107,7 @@ if ($api_pay_failed<>"true"){
 			} else {
 				$apikey_validate_result = "Failed";
 			}
-		} elseif ($gatewaymodule == "JSJApiPay_WeChat_QRCode"){
+		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode"){
 			//微信回调验证部分
 			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$uid.$total)){
 				$apikey_validate_result = "Success";
@@ -116,10 +116,10 @@ if ($api_pay_failed<>"true"){
 			}
 		}
 
-		if($apikey_validate_result!="Success")){
+		if($apikey_validate_result!="Success"){
 			//不正确跳转到首页，并记录
 			logTransaction($GATEWAY["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
-			header('location:/');
+			header('location:../../../clientarea.php?from=paygateway');
 			exit;
 
 		} else {

@@ -75,6 +75,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return
 	#现已支持HTTPS地址-2016-11-13
 	#$JSJApiPay_Alipay_Web_config['return_url'] = "";
+	$system_url = $params['systemurl'];
 	$JSJApiPay_Alipay_Web_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)

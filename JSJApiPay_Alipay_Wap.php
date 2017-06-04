@@ -75,19 +75,17 @@ function JSJApiPay_Alipay_Wap_link($params) {
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_wap&act=return
 	#现已支持HTTPS地址-2016-11-13
 	#$JSJApiPay_Alipay_Wap_config['return_url'] = "";
+	$system_url = $params['systemurl'];
 	$JSJApiPay_Alipay_Wap_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_wap&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_Alipay_Wap_config['api_url'] = "//api.jsjapp.com//plugin.php?id=add:alipay";
+	$JSJApiPay_Alipay_Wap_config['api_url'] = "//api.jsjapp.com//plugin.php?id=add:alipay_wap";
 
 	/*生成addnum参数:
-	我们允许自定义订单传递过来，变量为 $_POST['addnum']  组合方式为 alip + 您的apiid + 自定义参数
-	其中，自定义参数必须为 数字、字母、或数字字母组合，不能超过18位。组合成功如：alip12345cd3d333233efeef690
-	如果没有传递过来订单号，则系统自动生成订单号。除了商品类，一般的充值类不需要自定义订单号。
-	PS！请不要随意修改！后方回调也会验证。
+	自定义订单号码，自定义格式: 30 + 您的apiid + 最长20位数字 (比如：301234500112233445566)
+	自定义订单号码，不能重复。如果删除此行，平台会自动生成。单号必须纯数字。
 	*/
-
-	$JSJApiPay_Alipay_Wap_config['addnum'] = "alip".$JSJApiPay_Alipay_Wap_config['apiid']."ALIPAYInvoces".$invoiceid;
+	$JSJApiPay_Alipay_Wap_config['addnum'] = "30".$JSJApiPay_Alipay_Wap_config['apiid'].$invoiceid;
 
 	//基本参数
 	$parameter = array(
