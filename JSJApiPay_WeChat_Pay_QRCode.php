@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.13-2017-06-04-01
+ * @version    0.14-2017-06-05-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -15,7 +15,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_WeChat_Pay_QRCode_config() {
     $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江微信扫码支付免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江[微信扫码支付]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在这里注册：http://api.jsjapp.com/", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -204,7 +204,7 @@ HTML_CODE;
 		if (stristr($curl_create_qrcode_res_data, 'weixin://wxpay/')) {
 			return $html_code;
 		} else {
-			return "<center>二维码获取失败，请重试</center>";
+			return "<center><b>二维码获取失败，请重试</b></center></br><button type=\"button\" class=\"btn btn-danger btn-block\" onclick=\"location.reload();\">重新获取二维码</button>";
 		}
 	} else {
 		return "<img src='$img' alt='使用微信支付'>";
