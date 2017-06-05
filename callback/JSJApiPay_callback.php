@@ -24,7 +24,7 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     if ($incoming_payment_type == 'alipay_web'){
     	$gatewaymodule = "JSJApiPay_Alipay_Web";
     } elseif ($incoming_payment_type == 'alipay_wap'){
-    	$gatewaymodule = "JSJApiPay_Alipay_Wep";
+    	$gatewaymodule = "JSJApiPay_Alipay_Wap";
     } elseif ($incoming_payment_type == 'alipay_qrcode'){
     	$gatewaymodule = "JSJApiPay_Alipay_QRCode";
     } elseif ($incoming_payment_type == 'wechat_pay_qrcode'){
@@ -99,7 +99,7 @@ if ($api_pay_failed<>"true"){
 
 		//官方支付宝WEB接口、支付宝WAP接口与微信支付接口回调验证和订单组合有所区别
 
-		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wep" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
+		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
 			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum)){
