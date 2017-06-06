@@ -138,9 +138,9 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 
 	//tooltip提示，判断是否为移动端
 	if (isMobile()) {
-		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="top" title="<h5>请长按二维码保存到相册，到微信扫一扫中点击右上角三个点，选择从相册选取二维码进行支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="top" title="<h5>请长按二维码保存到相册，到微信扫一扫中点击右上角三个点，选择从相册选取二维码进行支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	} else {
-		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	}
 
 	$html_code = <<<HTML_CODE
@@ -153,10 +153,10 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 <div class="JSJApiPay_WeChat_Pay_QRCode" style="max-width: 240px;margin: 0 auto">
 	{$tooltip_QRCode_info}
 		<!-- QRCode Should Be Display Here , Or Check Your Explorer Version.-->
-		<img src="{$QRCode_ICON_img}" style="position: absolute;top: 50%;left: 50%;width:57.5px;height:57.5px;margin-left: -28.75px;margin-top: -14.375px">
+		<img src="{$QRCode_ICON_img}" style="position: absolute;left: 50%;width: 58px;height: 58px;margin-left: -28px;margin-top: 86px">
 	</div>
 </div>
-<button type="button" class="btn btn-success btn-block" onclick="location.reload();">刷新二维码</button>
+<button type="button" class="btn btn-success btn-block"  style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>
 <script>
 	jQuery('#JSJApiPay_WeChat_Pay_QRCode_IMG').qrcode({
 		width	:	230,
@@ -211,7 +211,7 @@ HTML_CODE;
 		if (stristr($curl_create_qrcode_res_data, 'weixin://wxpay/')) {
 			return $html_code;
 		} else {
-			return "<center><b>二维码获取失败，请重试</b></center></br><button type=\"button\" class=\"btn btn-danger btn-block\" onclick=\"location.reload();\">重新获取二维码</button>";
+			return "<center><b>二维码获取失败，请重试</b></center></br><button type=\"button\" class=\"btn btn-danger btn-block\"  style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新获取二维码</button>";
 		}
 	} else {
 		return "<img src='$img' alt='使用微信支付'>";
