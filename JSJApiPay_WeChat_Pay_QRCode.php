@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.14-2017-06-05-01
+ * @version    0.14-2017-06-06-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -49,7 +49,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
     }
 
     /********************************************************************************************************
-    GET页面
+    GET/POST页面
 	Iframe嵌套至 https://alipay.xunchu.net/pay/wx/native.php?apiid=【您的apiid】&total=【金额】&apikey=【MD5(您的apikey)】&uid=【支付的会员UID】&showurl=【您的回调地址】&addnum=【您的订单编号】
 	订单编号规则：wx+您的apiid+20位以内数字字母
     
@@ -76,9 +76,9 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	#支付提示图片默认可选
 
 	//创建订单后跳转至发票页面前Loading时显示的图片，依据需求可选底色和中英文PNG，一般情况下此图片不会展示较长时间(除非您站点服务器跳转较慢)。
-	$img = $systemurl . "/modules/gateways/JSJApiPay/img/WeChat_Pay_NO_BG_zh_cn.png";
+	$img = $systemurl . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_NO_BG_zh_cn.png";
 	//发票二维码嵌入ICON
-	$QRCode_ICON_img = $systemurl . "/modules/gateways/JSJApiPay/img/WeChat_Pay_Money_Icon.png";
+	$QRCode_ICON_img = $systemurl . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_Money_Icon.png";
 	
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=wechat_pay_qrcode&act=return
 	#现已支持HTTPS地址-2016-11-13

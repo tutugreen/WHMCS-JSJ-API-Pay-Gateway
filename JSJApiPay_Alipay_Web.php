@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.13-2017-06-04-01
+ * @version    0.14-2017-06-06-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -15,7 +15,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Alipay_Web_config() {
     $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江支付宝PC端网页免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江[支付宝PC端网页]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在这里注册：http://api.jsjapp.com/", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -70,7 +70,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	#Special Variables
 
 	#支付提示图片默认可选：Alipay_01.gif、Alipay_02.png、Alipay_03.png
-	$img = $systemurl . "/modules/gateways/JSJApiPay/img/Alipay_02.png";
+	$img = $systemurl . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
 	
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return
 	#现已支持HTTPS地址-2016-11-13
