@@ -136,6 +136,13 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	//关闭CURL
 	curl_close($curl_create_qrcode_res);
 
+	//tooltip提示，判断是否为移动端
+	if (isMobile()) {
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h5>请长按二维码保存到相册，到微信扫一扫中点击右上角三个点，点击从相册选取二维码进行支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
+	} else {
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
+	}
+
 	$html_code = <<<HTML_CODE
 <!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
 <!-- Loading Required JS/CSS -->
@@ -144,7 +151,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <!-- Jquery Polling Invoice & Check Result-->
 <div class="JSJApiPay_WeChat_Pay_QRCode" style="max-width: 240px;margin: 0 auto">
-	<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">
+	{$tooltip_QRCode_info}
 		<!-- QRCode Should Be Display Here , Or Check Your Explorer Version.-->
 		<img src="{$QRCode_ICON_img}" style="position: absolute;top: 50%;left: 50%;width:57.5px;height:57.5px;margin-left: -28.75px;margin-top: -14.375px">
 	</div>
