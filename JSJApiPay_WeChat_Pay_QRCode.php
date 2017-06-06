@@ -210,8 +210,10 @@ HTML_CODE;
 		//return $html_code;
 		if (stristr($curl_create_qrcode_res_data, 'weixin://wxpay/')) {
 			return $html_code;
+		} elseif (stristr($curl_create_qrcode_res_data, '订单金额被更改')) {
+			return "<center><b>由于账单金额被更改，二维码获取失败，</b></center><button type=\"button\" class=\"btn btn-success btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./submitticket.php?from=payment_failed_amount_changed');\">联系客服拆分账单(推荐)</button><button type=\"button\" class=\"btn btn-warning btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./clientarea.php?action=addfunds&from=payment_failed_amount_changed');\">自助充值相应余额支付</button>";
 		} else {
-			return "<center><b>二维码获取失败，请重试</b></center></br><button type=\"button\" class=\"btn btn-danger btn-block\"  style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新获取二维码</button>";
+			return "<center><b>二维码获取失败，请重试</b></center><button type=\"button\" class=\"btn btn-danger btn-block\" style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新获取二维码</button>";
 		}
 	} else {
 		return "<img src='$img' alt='使用微信支付'>";
