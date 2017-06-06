@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.13-2017-06-04-01
+ * @version    0.14-2017-06-06-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -29,6 +29,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     	$gatewaymodule = "JSJApiPay_Alipay_QRCode";
     } elseif ($incoming_payment_type == 'wechat_pay_qrcode'){
     	$gatewaymodule = "JSJApiPay_WeChat_Pay_QRCode";
+    } elseif ($incoming_payment_type == 'qq_pay_qrcode'){
+    	$gatewaymodule = "JSJApiPay_QQ_Pay_QRCode";
     } else {
     	if ($debug) {
     		$msg="[JSJApiPay]收到未知回调，payment_type 变量缺失或错误";
@@ -97,7 +99,7 @@ if ($api_pay_failed<>"true"){
 
 		//验证回调key
 
-		//官方支付宝WEB接口、支付宝WAP接口与微信支付接口回调验证和订单组合有所区别
+		//官方支付宝WEB接口、支付宝WAP接口与微信、QQ钱包支付接口回调验证和订单组合有所区别
 
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
@@ -107,7 +109,7 @@ if ($api_pay_failed<>"true"){
 			} else {
 				$apikey_validate_result = "Failed";
 			}
-		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode"){
+		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
 			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$uid.$total)){
 				$apikey_validate_result = "Success";
