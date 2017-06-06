@@ -138,7 +138,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 
 	//tooltip提示，判断是否为移动端
 	if (isMobile()) {
-		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h5>请长按二维码保存到相册，到微信扫一扫中点击右上角三个点，点击从相册选取二维码进行支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="top" title="<h5>请长按二维码保存到相册，到微信扫一扫中点击右上角三个点，选择从相册选取二维码进行支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
 	} else {
 		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;margin-bottom: 5px;padding-top: 5px;">';
 	}
