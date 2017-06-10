@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.14-2017-06-06-01
+ * @version    0.15-2017-06-10-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -111,7 +111,7 @@ if ($api_pay_failed<>"true"){
 			}
 		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
-			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$uid.$total)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$uid.$total)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
