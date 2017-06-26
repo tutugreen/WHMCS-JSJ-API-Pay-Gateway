@@ -50,7 +50,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 
     /********************************************************************************************************
     GET/POST页面
-	Iframe嵌套至 https://alipay.xunchu.net/pay/wx/native.php?apiid=【您的apiid】&total=【金额】&apikey=【MD5(您的apikey)】&uid=【支付的会员UID】&showurl=【您的回调地址】&addnum=【您的订单编号】
+	Iframe嵌套至 https://pay.maweiwangluo.com/pay/wx/native.php?apiid=【您的apiid】&total=【金额】&apikey=【MD5(您的apikey)】&uid=【支付的会员UID】&showurl=【您的回调地址】&addnum=【您的订单编号】
 	订单编号规则：wx+您的apiid+20位以内数字字母
     
     ********************************************************************************************************/
@@ -87,7 +87,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	$JSJApiPay_WeChat_Pay_QRCode_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=wechat_pay_qrcode&act=return";
 	
 	#API接口设定(此处使用特别接口)
-	$JSJApiPay_WeChat_Pay_QRCode_config['api_url'] = "https://alipay.xunchu.net/pay/wx/native2.php";
+	$JSJApiPay_WeChat_Pay_QRCode_config['api_url'] = "https://pay.maweiwangluo.com/pay/wx/native2.php";
 
 	/*生成addnum参数:
 	我们允许自定义订单传递过来，订单编号规则：wx+您的apiid+20位以内数字字母，变量为 $_POST['addnum'] 或 $_GET['addnum']
