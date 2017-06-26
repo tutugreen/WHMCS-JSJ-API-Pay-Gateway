@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.15-2017-06-10-01
+ * @version    0.16-2017-06-26-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -96,7 +96,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	PS！本接口文件已做好匹配生成，请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_WeChat_Pay_QRCode_config['addnum'] = "wx".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."WeChatInvoces".$invoiceid;
+	$JSJApiPay_WeChat_Pay_QRCode_config['addnum'] = "wx".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."WeChatInvoices".$invoiceid;
 
 	//基本参数
 	$parameter = array(

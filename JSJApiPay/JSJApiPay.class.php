@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2017
  * @license    MIT
- * @version    0.15-2017-06-10-01
+ * @version    0.16-2017-06-26-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -26,6 +26,7 @@ function JSJApiPay_logResult($word='',$file="../../../downloads/JSJApiPay_log.ph
 }
 
 /*移动端判断*/
+/* From http://www.thinkphp.cn/code/2107.html */
 function isMobile()
 { 
 	// 如果有HTTP_X_WAP_PROFILE则一定是移动设备
