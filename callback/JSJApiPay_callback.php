@@ -108,14 +108,14 @@ if ($api_pay_failed<>"true"){
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$uid.$total)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
