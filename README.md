@@ -180,4 +180,4 @@ A：同上，当账单金额被更改时（例如客户手动使用余额支付�
 
 ## Copyright and license
 
-Copyright 2016~2017 Tutugreen.com. Code released under [the MIT license](https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway/blob/master/LICENSE).
+Copyright 2016~2017 Tutugreen.com "o((>ω< ))o". Code released under [the MIT license](https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway/blob/master/LICENSE).
