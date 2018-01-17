@@ -4,19 +4,19 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2017
+ * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.16-2017-06-26-01
+ * @version    0.17-2018-01-17-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
- 
+
 require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Alipay_Web_config() {
     $configarray = array(
 		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江[支付宝PC端网页]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
-		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在这里注册：http://api.jsjapp.com/", ),
+		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
 		"debug" => array("FriendlyName" => "调试模式", "Type" => "yesno", "Description" => "调试模式,详细LOG请见[WHMCS]/download/JSJApiPay_log.php，使用文件管理或FTP等查看。", ),
@@ -39,7 +39,7 @@ function JSJApiPay_Alipay_Web_link($params) {
     }
 
     /********************************************************************************************************
-    POST页面，发送参数传递至 http://api.jsjapp.com/plugin.php?id=add:alipay
+    POST页面，发送参数传递至 https://api.jsjapp.com/plugin.php?id=add:alipay
     传递需求参数说明：
     参数	含义	是否必须	
     $_POST['addnum']	订单编号：见下面的特别参数说明	可选	特别参数
@@ -65,17 +65,16 @@ function JSJApiPay_Alipay_Web_link($params) {
 
     #System Variables
 	$companyname = $params['companyname'];
-	$systemurl = $params['systemurl'];
+	$system_url = rtrim($params['systemurl'], "/");
 	
 	#Special Variables
 
 	#支付提示图片默认可选：Alipay_01.gif、Alipay_02.png、Alipay_03.png
-	$img = $systemurl . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
+	$img = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
 	
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return
 	#现已支持HTTPS地址-2016-11-13
 	#$JSJApiPay_Alipay_Web_config['return_url'] = "";
-	$system_url = $params['systemurl'];
 	$JSJApiPay_Alipay_Web_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)
@@ -102,22 +101,61 @@ function JSJApiPay_Alipay_Web_link($params) {
 	"api_url"		=> trim($JSJApiPay_Alipay_Web_config['api_url']),
 	);
 
-	$html_code="
-	<!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
-	<form name='JSJApiPay_Alipay_Web_form' action='".$parameter['api_url']."' method='POST'>
-		<input type='hidden' name='addnum' value='".$parameter['addnum']."'>
-		<input type='hidden' name='total' value='".$parameter['amount']."'>
-		<input type='hidden' name='showurl' value='".$parameter['return_url']."'>
-		<input type='hidden' name='uid' value='".$parameter['invoiceid']."'>
-		<input type='hidden' name='apiid' value='".$parameter['apiid']."'>
-		<input type='hidden' name='apikey' value='".$parameter['apikey']."'>
-	</form>
-	<a href='#' onclick=\"document.forms['JSJApiPay_Alipay_Web_form'].submit();\"><img src='$img' alt='点击使用支付宝支付'> </a>
-	";
+	$html_code = <<<HTML_CODE
+<!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
+<!-- Loading Required JS/CSS -->
+<script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<!-- Jquery Polling Invoice & Check Result-->
+<form name="JSJApiPay_Alipay_Web_form" action="{$parameter['api_url']}" method="POST">
+	<input type="hidden" name="addnum" value="{$parameter['addnum']}">
+	<input type="hidden" name="total" value="{$parameter['amount']}">
+	<input type="hidden" name="showurl" value="{$parameter['return_url']}">
+	<input type="hidden" name="uid" value="{$parameter['invoiceid']}">
+	<input type="hidden" name="apiid" value="{$parameter['apiid']}">
+	<input type="hidden" name="apikey" value="{$parameter['apikey']}">
+</form>
+<a href="#" onclick="document.forms['JSJApiPay_Alipay_Web_form'].submit();">
+    <img src="{$img}" alt="点击使用支付宝支付">
+</a>
+<script>
+jQuery(document).ready(function() {
+	var paid_status = false
+	var paid_timer = setInterval(function(){
+		$.ajax({
+			type: "post",
+			url : window.location.href,
+			data : {noqrcode: "true"},
+			dataType : "text",
+			success: function(data){
+				if ( data.indexOf('class="'+"paid"+'"') != -1)
+				{
+					clearInterval(paid_timer)
+					$('#paysuccess').modal('show')
+					setTimeout(function(){location.reload()},3000)
+				}
+			}})
+	},1500)
+})
+</script>
+<div class="modal fade" id="paysuccess">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><p class="text-success">支付成功</p></h4>
+			</div>
+			<div class="modal-body">
+				<p>本页面将在3秒后刷新</p>
+			</div>
+		</div>
+	</div>
+</div>
+HTML_CODE;
+
 	/**备用：<a href='#' onclick=\"document.forms['JSJApiPay_Alipay_Web_form'].submit();\"><img src='$img' alt='点击使用支付宝支付'> </a>**/
 
 	if ($debug) {
-		$msg="[JSJApiPay_Alipay_Web]订单: $invoiceid 生成支付表单 $html_code";
+		$msg="[YM01ApiPay_Alipay_Web]订单: $invoiceid 生成支付表单 $html_code";
 		JSJApiPay_logResult($msg);
 	}
 	return $html_code;

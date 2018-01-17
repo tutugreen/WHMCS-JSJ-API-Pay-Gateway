@@ -4,19 +4,23 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2017
+ * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.16-2017-06-26-01
+ * @version    0.17-2018-01-17-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
- 
+
 # Required File Includes
-include("../../../init.php");
-include("../../../includes/functions.php");
-include("../../../includes/gatewayfunctions.php");
-include("../../../includes/invoicefunctions.php");
+require_once("../../../init.php");
+require_once("../../../includes/functions.php");
+require_once("../../../includes/gatewayfunctions.php");
+require_once("../../../includes/invoicefunctions.php");
 require_once("../JSJApiPay/JSJApiPay.class.php");
+
+#Load
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 $gatewaymodule = "JSJApiPay";
 
 if ($_POST['payment_type'] or $_GET['payment_type']){
@@ -49,25 +53,25 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
 }
 
 if ($api_pay_failed<>"true"){
-	$GATEWAY = getGatewayVariables($gatewaymodule);
-	if (!$GATEWAY["type"]) die("Module Not Activated，您所请求的回调接口未启用！"); # Checks gateway module is active before accepting callback
+	$gateway = getGatewayVariables($gatewaymodule);
+	if (!$gateway["type"]) die("Module Not Activated，您所请求的回调接口未启用！"); # Checks gateway module is active before accepting callback
 	//Var Check
-		if (!isset($GATEWAY['apiid'])) { 
+		if (!isset($gateway['apiid'])) { 
 		echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
 		exit;
 		}
-		if (!isset($GATEWAY['apikey'])) { 
+		if (!isset($gateway['apikey'])) { 
 		echo '$apikey(安全检验码) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
 		exit;
 		}
-		if (!isset($GATEWAY['fee_acc'])) { 
+		if (!isset($gateway['fee_acc'])) { 
 		echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
 		exit;
 		}
 
 	//Start
-		$JSJApiPay_config['apiid'] = trim($GATEWAY['apiid']);
-		$JSJApiPay_config['apikey'] = trim($GATEWAY['apikey']);
+		$JSJApiPay_config['apiid'] = trim($gateway['apiid']);
+		$JSJApiPay_config['apikey'] = trim($gateway['apikey']);
 		$JSJApiPay_config['fee_acc'] = trim($GATEWAY['fee_acc']);
 
 	if ($_GET['act']=='return' or $_GET['act']=='bd'){
@@ -92,7 +96,7 @@ if ($api_pay_failed<>"true"){
 		$amount     = $incoming_total;     //支付金额
 		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
 		$apikey     = strtolower($incoming_apikey);     //传入的回调Key
-		$transid    = "JSJApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
+		$transid    = "YM01ApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
 		
 		//手续费计算
 		$fee        = $amount*$JSJApiPay_config['fee_acc'];
@@ -104,26 +108,43 @@ if ($api_pay_failed<>"true"){
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$uid.$total)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		}
 
-		if($apikey_validate_result!="Success"){
-			//不正确跳转到首页，并记录
-			logTransaction($GATEWAY["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
-			header('location:../../../clientarea.php?from=paygateway');
+		if ($apikey_validate_result!="Success"){
+			$api_pay_failed = "true";
+			if ($gatewaymodule == "JSJApiPay_Alipay_Wap"){
+			    //Wap同步回调比较特殊，不带参数，此处暂不对其订单判断结果，直接转到账单页等待异步更新（如支付成功会自动刷新）。
+			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
+			    exit;
+			} else {
+    			//不正确跳转到首页，并记录
+    			logTransaction($gateway["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
+    			if($_SERVER['HTTP_USER_AGENT']){
+    			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
+    			    header('location:../../../clientarea.php?from=paygateway');
+					exit;
+    			}else{
+    			    echo "error";
+					exit;
+    			}
+    			}else{
+    			    echo "error";
+					exit;
+    			}
+			}
 			exit;
-
 		} else {
 			//正确的路径，合法的参数，的确支付过的会员
 			/********************************************
@@ -131,14 +152,26 @@ if ($api_pay_failed<>"true"){
 				1、（本条由WHMCS处理）checkCbInvoiceID 会确认交易流水号的唯一性，防止刷单，如存在将exit自动停止。
 				2、（本条由WHMCS处理）addInvoicePayment 会校验交易基本信息，包括金额，完成自动入账，失败将自动exit退出。
 			********************************************/
+            # convert the currency where necessary
+            $userCurrency = getCurrency(Capsule::table("tblinvoices")->where("id",$invoiceid)->get()[0]->userid);
+            $userCurrency_id = $userCurrency["id"];
+            $userCurrency_suffix = $userCurrency["suffix"];
+            if($gateway['convertto'] && ($userCurrency != $gateway['convertto'])) {
+                # the users currency is not the same as the JSJApiPay currency, convert to the users currency
+                $amount = convertCurrency($amount,$gateway['convertto'],$userCurrency_id);
+                $fee   = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
+            }
 			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 回调验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
 			//注意，如果你的WHMCS目录比较特殊或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
-			header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
-			$invoiceid = checkCbInvoiceID($invoiceid,$GATEWAY["name"]); # Checks invoice ID is a valid invoice number or ends processing
-			checkCbTransID($transid);
-			addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
-			logTransaction($GATEWAY["name"],$_POST,"Successful-A");
-			echo "支付成功";
+			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
+			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
+			}else{
+			    echo "success";
+			}
+        	$invoiceid = checkCbInvoiceID($invoiceid,$gateway["name"]); # Checks invoice ID is a valid invoice number or ends processing
+        	checkCbTransID($transid);
+        	addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
+        	logTransaction($GATEWAY["name"],$_POST,"Successful-A");
 		}
 	}
 }
