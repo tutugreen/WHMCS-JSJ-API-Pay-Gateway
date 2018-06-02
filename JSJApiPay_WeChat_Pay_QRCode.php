@@ -95,13 +95,13 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	PS！本接口文件已做好匹配生成，请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_WeChat_Pay_QRCode_config['addnum'] = "wx".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."WeChatInvoices".$invoiceid;
+	$JSJApiPay_WeChat_Pay_QRCode_config['addnum'] = "wx".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."S1WX".$invoiceid;
 
 	//基本参数
 	$parameter = array(
 	"_input_charset"=> trim(strtolower($JSJApiPay_WeChat_Pay_QRCode_config['input_charset'])),
 	"addnum"        => trim($JSJApiPay_WeChat_Pay_QRCode_config['addnum']),
-	"amount"        => trim($amount),
+	"amount"        => number_format(trim($amount),2,".","");,
 	"return_url"	=> trim($JSJApiPay_WeChat_Pay_QRCode_config['return_url']),
 	"invoiceid"		=> trim($invoiceid),
 	"apiid"		    => $JSJApiPay_WeChat_Pay_QRCode_config['apiid'],
