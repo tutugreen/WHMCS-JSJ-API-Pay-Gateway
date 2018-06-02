@@ -95,13 +95,13 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 	PS！本接口文件已做好匹配生成，请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = "QQ".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."S1QQ".$invoiceid;
+	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = "QQ".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."QQInvoices".$invoiceid;
 
 	//基本参数
 	$parameter = array(
 	"_input_charset"=> trim(strtolower($JSJApiPay_QQ_Pay_QRCode_config['input_charset'])),
 	"addnum"        => trim($JSJApiPay_QQ_Pay_QRCode_config['addnum']),
-	"amount"        => number_format(trim($amount),2,".","");,
+	"amount"        => trim($amount),
 	"return_url"	=> trim($JSJApiPay_QQ_Pay_QRCode_config['return_url']),
 	"invoiceid"		=> trim($invoiceid),
 	"apiid"		    => $JSJApiPay_QQ_Pay_QRCode_config['apiid'],

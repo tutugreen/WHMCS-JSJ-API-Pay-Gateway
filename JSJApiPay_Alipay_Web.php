@@ -87,13 +87,13 @@ function JSJApiPay_Alipay_Web_link($params) {
 	PS！请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_Alipay_Web_config['addnum'] = "8".$JSJApiPay_Alipay_Web_config['apiid']."S1Ali".$invoiceid;
+	$JSJApiPay_Alipay_Web_config['addnum'] = "alip".$JSJApiPay_Alipay_Web_config['apiid']."ALIPAYInvoices".$invoiceid;
 
 	//基本参数
 	$parameter = array(
 	"_input_charset"=> trim(strtolower($JSJApiPay_Alipay_Web_config['input_charset'])),
 	"addnum"        => trim($JSJApiPay_Alipay_Web_config['addnum']),
-	"amount"        => number_format(trim($amount),2,".","");,
+	"amount"        => trim($amount),
 	"return_url"	=> trim($JSJApiPay_Alipay_Web_config['return_url']),
 	"invoiceid"		=> trim($invoiceid),
 	"apiid"		    => $JSJApiPay_Alipay_Web_config['apiid'],
