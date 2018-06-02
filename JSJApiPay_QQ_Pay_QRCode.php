@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.17-2018-01-17-01
+ * @version    0.18-2018-06-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -15,7 +15,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_QQ_Pay_QRCode_config() {
     $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江[QQ扫码支付]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[QQ扫码支付]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -86,7 +86,7 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 	$JSJApiPay_QQ_Pay_QRCode_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=qq_pay_qrcode&act=return";
 	
 	#API接口设定(此处使用特别接口)
-	$JSJApiPay_QQ_Pay_QRCode_config['api_url'] = "https://alipay.xunchu.net/pay/qq/native2.php";
+	$JSJApiPay_QQ_Pay_QRCode_config['api_url'] = "https://yun.maweiwangluo.com/pay/qq/native2.php";
 
 	/*生成addnum参数:
 	我们允许自定义订单传递过来，订单编号规则：QQ+您的apiid+20位以内数字字母，变量为 $_POST['addnum'] 或 $_GET['addnum']
@@ -95,14 +95,14 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 	PS！本接口文件已做好匹配生成，请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = "QQ".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."QQInvoices".$invoiceid;
+	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = "QQ".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."001Invoice".$invoiceid."qq";
 
 	//基本参数
 	$parameter = array(
 	"_input_charset"=> trim(strtolower($JSJApiPay_QQ_Pay_QRCode_config['input_charset'])),
 	"addnum"        => trim($JSJApiPay_QQ_Pay_QRCode_config['addnum']),
-	"amount"        => trim($amount),
-	"return_url"	=> trim($JSJApiPay_QQ_Pay_QRCode_config['return_url']),
+	"amount"        => number_format(trim($amount),2,".",""),
+	"return_url"	=> trim($JSJApiPay_QQ_Pay_QRCode_config['return_url'])."&invoiceid=".trim($invoiceid),
 	"invoiceid"		=> trim($invoiceid),
 	"apiid"		    => $JSJApiPay_QQ_Pay_QRCode_config['apiid'],
 	"apikey"		=> strtolower(md5($JSJApiPay_QQ_Pay_QRCode_config['apikey'])),
@@ -215,7 +215,7 @@ HTML_CODE;
 	//return $html_code;
 	if (stristr($curl_create_qrcode_res_data, 'https://qpay.qq.com/qr/')) {
 		return $html_code;
-	} elseif (stristr($curl_create_qrcode_res_data, '订单金额被更改')) {
+	} elseif (stristr($curl_create_qrcode_res_data, '金额变动无法支付')) {
 		return "<center><b>由于账单金额被更改，二维码获取失败。</b></center><button type=\"button\" class=\"btn btn-success btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./submitticket.php?from=payment_failed_amount_changed');\">联系客服拆分账单(推荐)</button><button type=\"button\" class=\"btn btn-warning btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./clientarea.php?action=addfunds&from=payment_failed_amount_changed');\">自助充值相应余额支付</button>";
 	} elseif (stristr($curl_create_qrcode_res_data, '此网站不能接入QQ钱包支付') && $no_service_provider_in_error_message = "false") {
 		return "<center><b>此网站未通过签约审核，不能接入QQ钱包支付，二维码获取失败。</b></center><button type=\"button\" class=\"btn btn-success btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('//api.jsjapp.com/plugin.php?id=add:user&act=mypay');\">前往金沙江审核开通</button><button type=\"button\" class=\"btn btn-warning btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('//api.jsjapp.com/plugin.php?id=add:user&act=calladmin');\">联系支付服务提供商客服</button>";

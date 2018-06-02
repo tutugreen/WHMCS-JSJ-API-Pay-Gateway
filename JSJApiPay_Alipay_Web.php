@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.17-2018-01-17-01
+ * @version    0.18-2018-06-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -15,7 +15,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Alipay_Web_config() {
     $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金沙江[支付宝PC端网页]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[支付宝]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -78,7 +78,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	$JSJApiPay_Alipay_Web_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_Alipay_Web_config['api_url'] = "//api.jsjapp.com/plugin.php?id=add:alipay";
+	$JSJApiPay_Alipay_Web_config['api_url'] = "	https://yun.maweiwangluo.com/pay/ali/submit.php";
 
 	/*生成addnum参数:
 	我们允许自定义订单传递过来，变量为 $_POST['addnum']  组合方式为 alip + 您的apiid + 自定义参数
@@ -87,14 +87,14 @@ function JSJApiPay_Alipay_Web_link($params) {
 	PS！请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_Alipay_Web_config['addnum'] = "alip".$JSJApiPay_Alipay_Web_config['apiid']."ALIPAYInvoices".$invoiceid;
+	$JSJApiPay_Alipay_Web_config['addnum'] = "8".$JSJApiPay_Alipay_Web_config['apiid']."001Invoice".$invoiceid."a";
 
 	//基本参数
 	$parameter = array(
 	"_input_charset"=> trim(strtolower($JSJApiPay_Alipay_Web_config['input_charset'])),
 	"addnum"        => trim($JSJApiPay_Alipay_Web_config['addnum']),
-	"amount"        => trim($amount),
-	"return_url"	=> trim($JSJApiPay_Alipay_Web_config['return_url']),
+	"amount"        => number_format(trim($amount),2,".",""),
+	"return_url"	=> trim($JSJApiPay_Alipay_Web_config['return_url'])."&invoiceid=".trim($invoiceid),
 	"invoiceid"		=> trim($invoiceid),
 	"apiid"		    => $JSJApiPay_Alipay_Web_config['apiid'],
 	"apikey"		=> strtolower(md5($JSJApiPay_Alipay_Web_config['apikey'])),

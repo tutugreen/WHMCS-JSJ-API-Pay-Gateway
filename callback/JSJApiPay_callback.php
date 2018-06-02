@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.17-2018-01-17-01
+ * @version    0.18-2018-06-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -88,8 +88,10 @@ if ($api_pay_failed<>"true"){
 		//自动判断POST/GET
 		$incoming_apikey = $_POST['apikey'] ? $_POST['apikey'] : $_GET['apikey'];//$apikey 为接收到的回调key,用于认证
 		$incoming_addnum = $_POST['addnum'] ? $_POST['addnum'] : $_GET['addnum'];//$addnum 为接收到的订单编号
-		$incoming_uid = $_POST['uid'] ? $_POST['uid'] : $_GET['uid'];//$uid 为接收到的支付订单的网站会员
+		$incoming_uid = $_POST['uid'] ? $_POST['uid'] : $_GET['uid'];//$uid 现作为订单号使用，上限99999999
 		$incoming_total = $_POST['total'] ? $_POST['total'] : $_GET['total'];//$total 为接收到的支付金额
+
+		$incoming_invoiceid = $_POST['invoiceid'] ? $_POST['invoiceid'] : $_GET['invoiceid'];//$invoiceid 作为回调地址内订单号，一般使用GET。
 
 		//参数转化
 		$addnum     = strtolower($incoming_addnum);    //订单信息
@@ -97,7 +99,9 @@ if ($api_pay_failed<>"true"){
 		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
 		$apikey     = strtolower($incoming_apikey);     //传入的回调Key
 		$transid    = "YM01ApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
-		
+
+		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
+
 		//手续费计算
 		$fee        = $amount*$JSJApiPay_config['fee_acc'];
 
@@ -108,14 +112,14 @@ if ($api_pay_failed<>"true"){
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$uid.$total)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
@@ -126,14 +130,19 @@ if ($api_pay_failed<>"true"){
 			$api_pay_failed = "true";
 			if ($gatewaymodule == "JSJApiPay_Alipay_Wap"){
 			    //Wap同步回调比较特殊，不带参数，此处暂不对其订单判断结果，直接转到账单页等待异步更新（如支付成功会自动刷新）。
-			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
+				logTransaction($gateway["name"],$_GET.$_POST.$_SERVER['HTTP_USER_AGENT'],"Client Reach Invoice Page.");
+			    header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
 			    exit;
 			} else {
-    			//不正确跳转到首页，并记录
-    			logTransaction($gateway["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
+    			//取消异步回调后，统一跳转到账单
+				if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
+					logTransaction($gateway["name"],$_GET.$_POST.$_SERVER['HTTP_USER_AGENT'],"Client Reach Invoice Page.");
+				}else{
+					logTransaction($gateway["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
+				}
     			if($_SERVER['HTTP_USER_AGENT']){
     			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
-    			    header('location:../../../clientarea.php?from=paygateway');
+					header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
 					exit;
     			}else{
     			    echo "error";
@@ -164,7 +173,7 @@ if ($api_pay_failed<>"true"){
 			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 回调验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
 			//注意，如果你的WHMCS目录比较特殊或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
 			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
-			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway");
+			    header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
 			}else{
 			    echo "success";
 			}
