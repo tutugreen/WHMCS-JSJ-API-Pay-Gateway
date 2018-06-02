@@ -68,6 +68,8 @@ QQ：qq23333001Invoice1qq
 
 取消同步回调，支付完成统一转到账单页等待异步回调。
 
+旧版本更新直接覆盖，并手动删除JSJApiPay_Alipay_Wap.php即可。
+
 2018-01-17-01：
 
 修复多货币情况下，回调转换问题。感谢 [@Senrt](https://github.com/Senrt) 的反馈。
