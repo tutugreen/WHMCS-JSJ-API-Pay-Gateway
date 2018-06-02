@@ -78,7 +78,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	$JSJApiPay_Alipay_Web_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return";
 	
 	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_Alipay_Web_config['api_url'] = "	https://yun.maweiwangluo.com/pay/ali/submit.php";
+	$JSJApiPay_Alipay_Web_config['api_url'] = "https://yun.maweiwangluo.com/pay/ali/submit.php";
 
 	/*生成addnum参数:
 	我们允许自定义订单传递过来，变量为 $_POST['addnum']  组合方式为 alip + 您的apiid + 自定义参数
