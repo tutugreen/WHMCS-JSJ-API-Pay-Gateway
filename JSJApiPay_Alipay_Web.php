@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.18-2018-06-02-01
+ * @version    0.19-2018-06-19-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -87,7 +87,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	PS！请不要随意修改！后方回调也会验证。
 	*/
 
-	$JSJApiPay_Alipay_Web_config['addnum'] = "8".$JSJApiPay_Alipay_Web_config['apiid']."001Invoice".$invoiceid."a";
+	$JSJApiPay_Alipay_Web_config['addnum'] = "8".$JSJApiPay_Alipay_Web_config['apiid']."001AliInvoice".$invoiceid;
 
 	//基本参数
 	$parameter = array(
