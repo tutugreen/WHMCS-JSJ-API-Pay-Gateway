@@ -98,7 +98,7 @@ if ($api_pay_failed<>"true"){
 		$amount     = $incoming_total;     //支付金额
 		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
 		$apikey     = strtolower($incoming_apikey);     //传入的回调Key
-		$transid    = "YM01ApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
+		$transid    = "JSJApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
 
 		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
 
