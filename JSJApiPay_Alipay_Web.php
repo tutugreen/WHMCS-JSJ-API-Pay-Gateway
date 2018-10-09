@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.19-2018-06-19-01
+ * @version    0.20-2018-10-09-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -106,7 +106,6 @@ function JSJApiPay_Alipay_Web_link($params) {
 <!-- Loading Required JS/CSS -->
 <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<!-- Jquery Polling Invoice & Check Result-->
 <form name="JSJApiPay_Alipay_Web_form" action="{$parameter['api_url']}" method="POST">
 	<input type="hidden" name="addnum" value="{$parameter['addnum']}">
 	<input type="hidden" name="total" value="{$parameter['amount']}">
@@ -118,6 +117,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 <a href="#" onclick="document.forms['JSJApiPay_Alipay_Web_form'].submit();">
     <img src="{$img}" alt="点击使用支付宝支付">
 </a>
+<!-- Jquery Polling Invoice & Check Result-->
 <script>
 jQuery(document).ready(function() {
 	var paid_status = false

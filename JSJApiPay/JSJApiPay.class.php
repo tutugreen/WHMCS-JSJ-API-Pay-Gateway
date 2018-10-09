@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.19-2018-06-19-01
+ * @version    0.20-2018-10-09-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */

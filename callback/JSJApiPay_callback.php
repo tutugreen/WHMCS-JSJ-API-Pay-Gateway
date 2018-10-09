@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.19-2018-06-19-01
+ * @version    0.20-2018-10-09-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -52,6 +52,17 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
 	echo "非法访问";
 }
 
+if ($_POST['act'] or $_GET['act']){
+}else{
+	if ($debug) {
+	    $act = $_POST['act'] ? $_POST['act'] : $_GET['act'];
+		$msg="[JSJApiPay]收到未知回调，act 变量缺失或错误";
+		JSJApiPay_logResult($msg);
+	}
+	$api_pay_failed = "true";
+	echo "非法访问";
+}
+
 if ($api_pay_failed<>"true"){
 	$gateway = getGatewayVariables($gatewaymodule);
 	if (!$gateway["type"]) die("Module Not Activated，您所请求的回调接口未启用！"); # Checks gateway module is active before accepting callback
@@ -72,9 +83,9 @@ if ($api_pay_failed<>"true"){
 	//Start
 		$JSJApiPay_config['apiid'] = trim($gateway['apiid']);
 		$JSJApiPay_config['apikey'] = trim($gateway['apikey']);
-		$JSJApiPay_config['fee_acc'] = trim($GATEWAY['fee_acc']);
+		$JSJApiPay_config['fee_acc'] = trim($gateway['fee_acc']);
 
-	if ($_GET['act']=='return' or $_GET['act']=='bd'){
+	if ($act=='return' or $act=='bd'){
 		//回调地址
 		/********************************************
 			这里会传过来几个参数 分别为：
@@ -180,7 +191,8 @@ if ($api_pay_failed<>"true"){
         	$invoiceid = checkCbInvoiceID($invoiceid,$gateway["name"]); # Checks invoice ID is a valid invoice number or ends processing
         	checkCbTransID($transid);
         	addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
-        	logTransaction($GATEWAY["name"],$_POST,"Successful-A");
+        	logTransaction($gateway["name"],$_POST,"Successful-A");
+			exit;
 		}
 	}
 }
