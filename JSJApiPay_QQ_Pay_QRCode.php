@@ -78,27 +78,6 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 	$img = $system_url . "/modules/gateways/JSJApiPay/assets/images/QQ_Pay/QQ_Wallet_NO_BG_zh_cn.png";
 	//发票二维码嵌入ICON
 	$QRCode_ICON_img = $system_url . "/modules/gateways/JSJApiPay/assets/images/QQ_Pay/QQ_ICON_Small.png";
-	
-	#API接口设定(此处使用特别接口)
-	$JSJApiPay_QQ_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."&k=1&g=1";
-	$JSJApiPay_QQ_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=1";
-
-	//获取平台订单号
-	$curl_create_order_res = curl_init();
-	curl_setopt($curl_create_order_res, CURLOPT_URL, $JSJApiPay_QQ_Pay_QRCode_config['api_url']);
-	curl_setopt($curl_create_order_res, CURLOPT_TIMEOUT, 3);
-	curl_setopt($curl_create_order_res, CURLOPT_FRESH_CONNECT, 1);
-	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYPEER, true);
-	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYHOST, true);
-	curl_setopt($curl_create_order_res, CURLOPT_HEADER, 0);
-	curl_setopt($curl_create_order_res, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_create_order_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
-	//存储字符
-	$curl_create_order_res_data = trim(trim(curl_exec($curl_create_order_res)), "\xEF\xBB\xBF");
-	//关闭CURL
-	curl_close($curl_create_order_res);
-    //抽取平台订单号
-	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
 
     //转换订单金额
     if($amount<=9.99){
@@ -125,6 +104,27 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
         echo "订单金额超限，请联系客服支持。";
         return;
     }
+	
+	#API接口设定(此处使用特别接口)
+	$JSJApiPay_QQ_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."&k=".$JSJApiPay_QQ_Pay_QRCode_config['card_type']."&g=1";
+	$JSJApiPay_QQ_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=1";
+
+	//获取平台订单号
+	$curl_create_order_res = curl_init();
+	curl_setopt($curl_create_order_res, CURLOPT_URL, $JSJApiPay_QQ_Pay_QRCode_config['api_url']);
+	curl_setopt($curl_create_order_res, CURLOPT_TIMEOUT, 3);
+	curl_setopt($curl_create_order_res, CURLOPT_FRESH_CONNECT, 1);
+	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYHOST, true);
+	curl_setopt($curl_create_order_res, CURLOPT_HEADER, 0);
+	curl_setopt($curl_create_order_res, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_create_order_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
+	//存储字符
+	$curl_create_order_res_data = trim(trim(curl_exec($curl_create_order_res)), "\xEF\xBB\xBF");
+	//关闭CURL
+	curl_close($curl_create_order_res);
+    //抽取平台订单号
+	$JSJApiPay_QQ_Pay_QRCode_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
 
 	//准备获取订单链接参数
 	$curl_create_order_link_res_postfields = array(
