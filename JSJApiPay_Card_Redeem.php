@@ -18,7 +18,6 @@ function JSJApiPay_Card_Redeem_config() {
 		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云锁] 卡密兑换 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
-		"buy_link" => array("FriendlyName" => "购卡页面地址", "Type" => "text", "Size" => "50", "Description" => "[必填]引导用户购买卡密。",),
 		"card_amount_1" => array("FriendlyName" => "卡面金额(1/5)", "Type" => "text", "Size" => "50", "Description" => "[必填]准确填写，例：100.00",),
 		"card_amount_2" => array("FriendlyName" => "卡面金额(2/5)", "Type" => "text", "Size" => "50", "Description" => "[必填]准确填写，例：100.00",),
 		"card_amount_3" => array("FriendlyName" => "卡面金额(3/5)", "Type" => "text", "Size" => "50", "Description" => "[必填]准确填写，例：100.00",),
@@ -58,7 +57,7 @@ function JSJApiPay_Card_Redeem_link($params) {
 	$JSJApiPay_Card_Redeem_config['apiid'] = trim($params['apiid']);
 	$JSJApiPay_Card_Redeem_config['apikey'] = trim($params['apikey']);
 	$JSJApiPay_Card_Redeem_config['fee_acc'] = trim($params['fee_acc']);
-	$JSJApiPay_Card_Redeem_config['buy_link'] = trim($params['buy_link']);
+	$JSJApiPay_Card_Redeem_config['buy_link'] = "//yun.jsjapp.com/k/".$JSJApiPay_Card_Redeem_config['apiid'].".html";
 	$JSJApiPay_Card_Redeem_config['card_amount_1'] = trim($params['card_amount_1']);
 	$JSJApiPay_Card_Redeem_config['card_amount_2'] = trim($params['card_amount_2']);
 	$JSJApiPay_Card_Redeem_config['card_amount_3'] = trim($params['card_amount_3']);
