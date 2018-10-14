@@ -106,7 +106,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
     }
 	
 	#API接口设定(此处使用特别接口)
-	$JSJApiPay_WeChat_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."&k=1&g=1";
+	$JSJApiPay_WeChat_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."&k=".$JSJApiPay_WeChat_Pay_QRCode_config['card_type']."&g=".$invoiceid;
 	$JSJApiPay_WeChat_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=1";
 
 	//获取平台订单号
