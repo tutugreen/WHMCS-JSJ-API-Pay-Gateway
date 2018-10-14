@@ -23,6 +23,9 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 $gatewaymodule = "JSJApiPay";
 
+//预设参数
+$transid_header = "JSJApiPay";//可自定义WHMCS交易流水号前缀，一旦使用请保持一致，后期修改存在刷单风险。
+
 if ($_POST['payment_type'] or $_GET['payment_type']){
     $incoming_payment_type = $_POST['payment_type'] ? $_POST['payment_type'] : $_GET['payment_type'];
     if ($incoming_payment_type == 'alipay_web'){
@@ -37,6 +40,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     	$gatewaymodule = "JSJApiPay_QQ_Pay_QRCode";
     } elseif ($incoming_payment_type == 'card_redeem'){
     	$gatewaymodule = "JSJApiPay_Card_Redeem";
+    } elseif ($incoming_payment_type == 'card_order'){
+    	$gatewaymodule = "JSJApiPay_Card_Order";
     } else {
     	if ($debug) {
     		$msg="[JSJApiPay]收到未知回调，payment_type 变量缺失或错误";
@@ -111,7 +116,7 @@ if ($api_pay_failed<>"true"){
         	echo "核验失败。如需帮助，请联系客户支持。";
         	exit;
         }
-		$transid    = "JSJApiPay_Card_".$card;
+		$transid = $transid_header."Card_".$card;
 		$card_type = $_POST['card_type'] ? $_POST['card_type'] : $_GET['card_type'];//卡面金额
 		if($card_type=="1"){//从
 		    $amount=number_format(trim($gateway['card_amount_1']),2,".","");
@@ -181,7 +186,7 @@ if ($api_pay_failed<>"true"){
             if($gateway['convertto'] && ($userCurrency != $gateway['convertto'])) {
                 # the users currency is not the same as the JSJApiPay currency, convert to the users currency
                 $amount = convertCurrency($amount,$gateway['convertto'],$userCurrency_id);
-                $fee   = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
+                $fee = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
             }
 			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 兑换验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
         	$invoiceid = checkCbInvoiceID($invoiceid,$gateway["name"]); # Checks invoice ID is a valid invoice number or ends processing
@@ -214,6 +219,69 @@ HTML_CODE;
         	exit;
     	}
 	}
+
+	if ($act=='callback' and $incoming_payment_type == 'card_combine'){
+
+		//参数获取
+		//自动判断POST/GET
+		$incoming_addnum = $_POST['addnum'] ? $_POST['addnum'] : $_GET['addnum'];//订单编号
+		$incoming_total = $_POST['total'] ? $_POST['total'] : $_GET['total'];//支付金额
+		$incoming_sort = $_POST['sort'] ? $_POST['sort'] : $_GET['sort'];//数字(1支付宝2微信3QQ通道)，接口名称分离，无验证，不作为可靠参数
+		$incoming_uid = $_POST['uid'] ? $_POST['uid'] : $_GET['uid'];//$uid 现作为订单号使用，上限99999999
+		$incoming_apikey = $_POST['apikey'] ? $_POST['apikey'] : $_GET['apikey'];//md5(您的apikey+addnum+uid+total)
+		//$incoming_info = $_POST['info'] ? $_POST['info'] : $_GET['info'];//卡密信息，不做判断和使用
+
+        
+
+		//参数转化
+		$addnum     = trim($incoming_addnum);    //订单信息
+		$amount     = trim($incoming_total);     //支付金额
+		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
+		$apikey     = trim($incoming_apikey);     //传入的回调Key
+		$transid    = $transid_header."".$addnum;        //订单流水传递
+		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
+
+		//手续费计算
+		$fee        = $amount*$JSJApiPay_config['fee_acc'];
+
+		//验证回调key
+
+		if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$invoiceid.$amount)){
+			$apikey_validate_result = "Success";
+		} else {
+			$apikey_validate_result = "Failed";
+		}
+
+		if ($apikey_validate_result != "Success"){
+			$api_pay_failed = "true";
+			exit;
+		} else {
+			//checkCbInvoiceID 会确认交易流水号的唯一性，防止刷单，如存在将exit自动停止。
+			//addInvoicePayment 会校验交易基本信息，包括金额，完成自动入账，失败将自动exit退出。
+            # convert the currency where necessary
+            $userCurrency = getCurrency(Capsule::table("tblinvoices")->where("id",$invoiceid)->get()[0]->userid);
+            $userCurrency_id = $userCurrency["id"];
+            $userCurrency_suffix = $userCurrency["suffix"];
+            if($gateway['convertto'] && ($userCurrency != $gateway['convertto'])) {
+                # the users currency is not the same as the JSJApiPay currency, convert to the users currency
+                $amount = convertCurrency($amount,$gateway['convertto'],$userCurrency_id);
+                $fee = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
+            }
+			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 回调验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
+			//注意，如果你的WHMCS目录比较特殊或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
+			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
+			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
+			}else{
+			    echo "success";
+			}
+        	$invoiceid = checkCbInvoiceID($invoiceid,$gateway["name"]); # Checks invoice ID is a valid invoice number or ends processing
+        	checkCbTransID($transid);
+        	addInvoicePayment($invoiceid,$transid,$amount,$fee,$gatewaymodule);
+        	logTransaction($gateway["name"],$_POST,"Successful-A");
+        	exit;
+		}
+	}
+
 	if ($act=='return' or $act=='bd'){
 		//回调地址
 		/********************************************
@@ -234,13 +302,13 @@ HTML_CODE;
 		$incoming_invoiceid = $_POST['invoiceid'] ? $_POST['invoiceid'] : $_GET['invoiceid'];//$invoiceid 作为回调地址内订单号，一般使用GET。
 
 		//参数转化
-		$addnum     = strtolower($incoming_addnum);    //订单信息
-		$amount     = $incoming_total;     //支付金额
-		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
-		$apikey     = strtolower($incoming_apikey);     //传入的回调Key
-		$transid    = "JSJApiPay_".$addnum;        //订单流水传递，可在此修改前缀，请注意保持唯一性以防被刷单。
+		$addnum     = trim($incoming_addnum);    //订单信息
+		$amount     = trim($incoming_total);     //支付金额
+		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
+		$apikey     = trim($incoming_apikey);     //传入的回调Key
+		$transid    = $transid_header.$addnum;        //订单流水传递
 
-		$invoiceid  = $incoming_uid;       //支付会员(代替订单号)ID
+		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
 
 		//手续费计算
 		$fee        = $amount*$JSJApiPay_config['fee_acc'];
@@ -252,26 +320,26 @@ HTML_CODE;
 		if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode"){
 			//支付宝回调验证部分
 			//备用(请注意此参数并未启用) md5("apikey[".$apikey."]addnum[".$addnum."]uid[".$uid."]total[".$total."]");
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		} elseif ($gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode"){
 			//微信回调验证部分
-			if($apikey == md5($JSJApiPay_config['apikey'].$incoming_addnum.$invoiceid.$amount)){
+			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {
 				$apikey_validate_result = "Failed";
 			}
 		}
 
-		if ($apikey_validate_result!="Success"){
+		if ($apikey_validate_result != "Success"){
 			$api_pay_failed = "true";
 			if ($gatewaymodule == "JSJApiPay_Alipay_Wap"){
 			    //Wap同步回调比较特殊，不带参数，此处暂不对其订单判断结果，直接转到账单页等待异步更新（如支付成功会自动刷新）。
 				logTransaction($gateway["name"],$_GET.$_POST.$_SERVER['HTTP_USER_AGENT'],"Client Reach Invoice Page.");
-			    header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
+			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
 			    exit;
 			} else {
     			//取消异步回调后，统一跳转到账单
@@ -282,7 +350,7 @@ HTML_CODE;
 				}
     			if($_SERVER['HTTP_USER_AGENT']){
     			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
-					header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
+					header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
 					exit;
     			}else{
     			    echo "error";
@@ -295,12 +363,8 @@ HTML_CODE;
 			}
 			exit;
 		} else {
-			//正确的路径，合法的参数，的确支付过的会员
-			/********************************************
-				这里根据业务逻辑编写相应的程序代码。
-				1、（本条由WHMCS处理）checkCbInvoiceID 会确认交易流水号的唯一性，防止刷单，如存在将exit自动停止。
-				2、（本条由WHMCS处理）addInvoicePayment 会校验交易基本信息，包括金额，完成自动入账，失败将自动exit退出。
-			********************************************/
+			//checkCbInvoiceID 会确认交易流水号的唯一性，防止刷单，如存在将exit自动停止。
+			//addInvoicePayment 会校验交易基本信息，包括金额，完成自动入账，失败将自动exit退出。
             # convert the currency where necessary
             $userCurrency = getCurrency(Capsule::table("tblinvoices")->where("id",$invoiceid)->get()[0]->userid);
             $userCurrency_id = $userCurrency["id"];
@@ -308,12 +372,12 @@ HTML_CODE;
             if($gateway['convertto'] && ($userCurrency != $gateway['convertto'])) {
                 # the users currency is not the same as the JSJApiPay currency, convert to the users currency
                 $amount = convertCurrency($amount,$gateway['convertto'],$userCurrency_id);
-                $fee   = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
+                $fee = convertCurrency($fee,$gateway['convertto'],$userCurrency_id);
             }
 			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 回调验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
 			//注意，如果你的WHMCS目录比较特殊或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
 			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
-			    header("location:../../../viewinvoice.php?id=$incoming_invoiceid&from=paygateway&status=waitsuccess");
+			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
 			}else{
 			    echo "success";
 			}
