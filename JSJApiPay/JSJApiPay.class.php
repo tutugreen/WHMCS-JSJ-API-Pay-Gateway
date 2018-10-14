@@ -6,7 +6,7 @@
  * @author     tutugreen (yuanming@tutugreen.com)
  * @copyright  Copyright (c) Tutugreen.com 2016~2018
  * @license    MIT
- * @version    0.20-2018-10-09-01
+ * @version    0.18-2018-06-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  * 
  */
@@ -93,4 +93,15 @@ function isMobile()
 	} 
 	return false;
 }
+
+//字符串截取
+function get_string_between($string, $start, $end){
+    $string = ' ' . $string;
+    $ini = strpos($string, $start);
+    if ($ini == 0) return '';
+    $ini += strlen($start);
+    $len = strpos($string, $end, $ini) - $ini;
+    return substr($string, $ini, $len);
+}
+
 ?>
