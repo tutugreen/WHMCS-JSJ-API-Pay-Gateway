@@ -40,8 +40,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
     	$gatewaymodule = "JSJApiPay_QQ_Pay_QRCode";
     } elseif ($incoming_payment_type == 'card_redeem'){
     	$gatewaymodule = "JSJApiPay_Card_Redeem";
-    } elseif ($incoming_payment_type == 'card_order'){
-    	$gatewaymodule = "JSJApiPay_Card_Order";
+    } elseif ($incoming_payment_type == 'card_connect'){
+    	$gatewaymodule = "JSJApiPay_Card_Connect";
     } else {
     	if ($debug) {
     		$msg="[JSJApiPay]收到未知回调，payment_type 变量缺失或错误";
@@ -220,8 +220,7 @@ HTML_CODE;
     	}
 	}
 
-	if ($act=='callback' and $incoming_payment_type == 'card_combine'){
-
+	if ($act=='callback' and $incoming_payment_type == 'card_connect'){
 		//参数获取
 		//自动判断POST/GET
 		$incoming_addnum = $_POST['addnum'] ? $_POST['addnum'] : $_GET['addnum'];//订单编号
@@ -231,14 +230,12 @@ HTML_CODE;
 		$incoming_apikey = $_POST['apikey'] ? $_POST['apikey'] : $_GET['apikey'];//md5(您的apikey+addnum+uid+total)
 		//$incoming_info = $_POST['info'] ? $_POST['info'] : $_GET['info'];//卡密信息，不做判断和使用
 
-        
-
 		//参数转化
 		$addnum     = trim($incoming_addnum);    //订单信息
 		$amount     = trim($incoming_total);     //支付金额
 		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
 		$apikey     = trim($incoming_apikey);     //传入的回调Key
-		$transid    = $transid_header."".$addnum;        //订单流水传递
+		$transid    = $transid_header."Card_Connect_".$invoiceid."_".$addnum;        //订单流水传递
 		$invoiceid  = trim($incoming_uid);       //支付会员(代替订单号)ID
 
 		//手续费计算
@@ -254,6 +251,7 @@ HTML_CODE;
 
 		if ($apikey_validate_result != "Success"){
 			$api_pay_failed = "true";
+			logTransaction($gateway["name"],$_GET.$_POST,"Unsuccessfull-APIKEY-Validate-Failed");
 			exit;
 		} else {
 			//checkCbInvoiceID 会确认交易流水号的唯一性，防止刷单，如存在将exit自动停止。
@@ -270,7 +268,8 @@ HTML_CODE;
 			if ($debug) JSJApiPay_logResult("[JSJApiPay]订单 $invoiceid 回调验证成功，如入账成功详细参数可在WHMCS-财务记录-接口日志(网关事务日志)中查看");
 			//注意，如果你的WHMCS目录比较特殊或需要修改目的地，请在这里修改回调目的地，改为你的账单页面或其他。
 			if($_SERVER['HTTP_USER_AGENT'] && $_SERVER['HTTP_USER_AGENT'] !=""){
-			    header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
+			    //header("location:../../../viewinvoice.php?id=$invoiceid&from=paygateway&status=waitsuccess");
+			    echo "success";
 			}else{
 			    echo "success";
 			}

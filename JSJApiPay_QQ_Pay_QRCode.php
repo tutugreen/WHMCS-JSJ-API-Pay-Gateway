@@ -107,7 +107,7 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 	
 	#API接口设定(此处使用特别接口)
 	$JSJApiPay_QQ_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_QQ_Pay_QRCode_config['apiid']."&k=".$JSJApiPay_QQ_Pay_QRCode_config['card_type']."&g=".$invoiceid;
-	$JSJApiPay_QQ_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=1";
+	$JSJApiPay_QQ_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=".$invoiceid;
 
 	//获取平台订单号
 	$curl_create_order_res = curl_init();
