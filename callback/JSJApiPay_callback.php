@@ -24,7 +24,7 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 $gatewaymodule = "JSJApiPay";
 
 //预设参数
-$transid_header = "JSJApiPay";//可自定义WHMCS交易流水号前缀，一旦使用请保持一致，后期修改存在刷单风险。
+$transid_header = "JSJApiPay_";//可自定义WHMCS交易流水号前缀，一旦使用请保持一致，后期修改存在刷单风险。
 
 if ($_POST['payment_type'] or $_GET['payment_type']){
     $incoming_payment_type = $_POST['payment_type'] ? $_POST['payment_type'] : $_GET['payment_type'];
