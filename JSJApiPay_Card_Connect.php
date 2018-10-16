@@ -127,7 +127,7 @@ function JSJApiPay_Card_Connect_link($params) {
 	$JSJApiPay_Card_Connect_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
 
 	//准备获取订单链接参数
-	$curl_create_order_link_res_postfields = array(
+	$curl_create_qrcode_res_postfields = array(
     	"_input_charset"=> trim(strtolower($JSJApiPay_Card_Connect_config['input_charset'])),
     	"apiid" => $JSJApiPay_Card_Connect_config['apiid'],
     	"addnum" => $JSJApiPay_Card_Connect_config['addnum'],
@@ -135,7 +135,7 @@ function JSJApiPay_Card_Connect_link($params) {
     	"usermail" => "",
     	"num" => $JSJApiPay_Card_Connect_config['card_number'],
     	"tid" => $JSJApiPay_Card_Connect_config['card_type'],
-    	"tel" => md5($curl_create_order_res_data),
+    	"tel" => "13".date('dH',time()).rand(10000,99999),
     	"paylei" => "1",//Alipay:1,WeChat:2,QQ:3
 	);
 
@@ -152,15 +152,17 @@ function JSJApiPay_Card_Connect_link($params) {
 	curl_setopt($curl_create_qrcode_res, CURLOPT_POSTFIELDS, $curl_create_qrcode_res_postfields);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
 	//存储字符 
-	$curl_create_qrcode_res_data = trim(trim(curl_exec($curl_create_qrcode_res)), "\xEF\xBB\xBF");
+	$curl_create_qrcode_res_url = trim(trim(curl_exec($curl_create_qrcode_res)), "\xEF\xBB\xBF");
 	//关闭CURL
 	curl_close($curl_create_qrcode_res);
 	
-	//tooltip提示，判断是否为移动端
+	//按钮判断是否为移动端
 	if (isMobile()) {
-		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝、微信、QQ 扫码支付。</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+		$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="javascript:window.open(\''.$curl_create_qrcode_res_url.'\');">使用本机支付</button><button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
+		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝、微信、QQ 扫码支付，，可轻触\'使用本机支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	} else {
-		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用 支付宝、微信、QQ 扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+		$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
+		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用 支付宝、微信、QQ 扫码支付。</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	}
 
 	$html_code = <<<HTML_CODE
@@ -176,7 +178,7 @@ function JSJApiPay_Card_Connect_link($params) {
 		<img src="{$QRCode_ICON_img}" style="position: absolute;left: 50%;width: 58px;height: 58px;margin-left: -28px;margin-top: 86px">
 	</div>
 </div>
-<button type="button" class="btn btn-success btn-block"  style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>
+{$button_below_QRCode}
 <script>
 	jQuery('#JSJApiPay_Card_Connect_IMG').qrcode({
 		width	:	230,
