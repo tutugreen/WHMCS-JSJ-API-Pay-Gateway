@@ -48,11 +48,6 @@ function JSJApiPay_Card_Connect_link($params) {
         return;
     }
 
-	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
-	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
-		return "<img src='$img' alt='使用 支付宝、微信、QQ 支付'>";
-	}
-
 	$JSJApiPay_Card_Connect_config['input_charset'] = 'utf-8';
 	$JSJApiPay_Card_Connect_config['apiid'] = trim($params['apiid']);
 	$JSJApiPay_Card_Connect_config['apikey'] = trim($params['apikey']);
@@ -75,9 +70,16 @@ function JSJApiPay_Card_Connect_link($params) {
 	#支付提示图片默认可选
 
 	//创建订单后跳转至发票页面前Loading时显示的图片，依据需求可选底色和中英文PNG，一般情况下此图片不会展示较长时间(除非您站点服务器跳转较慢)。
-	$img = $system_url . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_NO_BG_zh_cn.png";
+	$img["Alipay_Logo"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_Web_Logo_855x300.png";
+	$img["WeChat_Pay_Logo"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_NO_BG_zh_cn.png";
+	$img["QQ_Pay_Logo"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/QQ_Pay/QQ_Wallet_NO_BG_zh_cn.png";
 	//发票二维码嵌入ICON
-	$QRCode_ICON_img = $system_url . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_Money_Icon.png";
+	$img["WeChat_Pay_ICON"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_Money_Icon.png";
+
+	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
+	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
+		return "<img src='".$img["Alipay_Logo"]."' alt='欢迎使用 支付宝 支付' style=\"height: 5.5em;margin: 2em 3.7em;\"/><img src='".$img["WeChat_Pay_Logo"]."' alt='欢迎使用 微信 支付'  style=\"height: 9em;\"/><img src='".$img["QQ_Pay_Logo"]."' alt='欢迎使用 QQ 支付' style=\"height: 8em;\"/>";
+	}
 
     //转换订单金额
     if($amount<=9.99){
@@ -159,7 +161,7 @@ function JSJApiPay_Card_Connect_link($params) {
 	//按钮判断是否为移动端
 	if (isMobile()) {
 		$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="javascript:window.open(\''.$curl_create_qrcode_res_url.'\');">使用本机支付</button><button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
-		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝、微信、QQ 扫码支付，，可轻触\'使用本机支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝、微信、QQ 扫码支付，可轻触\'使用本机支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	} else {
 		$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
 		$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用 支付宝、微信、QQ 扫码支付。</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
@@ -175,7 +177,7 @@ function JSJApiPay_Card_Connect_link($params) {
 <div class="JSJApiPay_Card_Connect" style="max-width: 240px;margin: 0 auto">
 	{$tooltip_QRCode_info}
 		<!-- QRCode Should Be Display Here , Or Check Your Explorer Version.-->
-		<img src="{$QRCode_ICON_img}" style="position: absolute;left: 50%;width: 58px;height: 58px;margin-left: -28px;margin-top: 86px">
+		<img src="{$img["WeChat_Pay_ICON"]}" style="position: absolute;left: 50%;width: 58px;height: 58px;margin-left: -28px;margin-top: 86px">
 	</div>
 </div>
 {$button_below_QRCode}

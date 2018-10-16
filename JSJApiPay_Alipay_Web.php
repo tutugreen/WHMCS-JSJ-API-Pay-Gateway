@@ -48,11 +48,6 @@ function JSJApiPay_Alipay_Web_link($params) {
         return;
     }
 
-	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
-	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
-		return "<img src='$img' alt='使用支付宝支付'>";
-	}
-
 	$JSJApiPay_Alipay_Web_config['input_charset'] = 'utf-8';
 	$JSJApiPay_Alipay_Web_config['apiid'] = trim($params['apiid']);
 	$JSJApiPay_Alipay_Web_config['apikey'] = trim($params['apikey']);
@@ -73,9 +68,13 @@ function JSJApiPay_Alipay_Web_link($params) {
 	#Special Variables
 
 	#支付提示图片默认可选
+	$img["Alipay_Logo"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_Web_Logo_342x120.png";
+	$img["Alipay_Button"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
 
-	#支付提示图片默认可选：Alipay_01.gif、Alipay_02.png、Alipay_03.png
-	$img = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
+	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
+	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
+		return "<img src='".$img["Alipay_Logo"]."' alt='使用支付宝支付'>";
+	}
 
     //转换订单金额
     if($amount<=9.99){
@@ -196,7 +195,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 {$curl_create_form_res_data}
 </form>
 <a href="#" onclick="document.forms['YM02ApiPay_Alipay_Web_form'].submit();">
-    <img src="{$img}" alt="点击使用支付宝支付">
+    <img src="{$img["Alipay_Button"]}" alt="点击使用支付宝支付">
 </a>
 <script>jQuery(document).ready(function() {
 	var paid_status = false
