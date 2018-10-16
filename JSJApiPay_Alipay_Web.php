@@ -15,7 +15,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Alipay_Web_config() {
     $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[支付宝]免签 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 支付宝 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -37,19 +37,22 @@ function JSJApiPay_Alipay_Web_link($params) {
     echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
     exit;
     }
+    //判断是否需要获取二维码，排除轮询请求节省服务器资源
+    if ($_POST['noqrcode'] or $_GET['noqrcode']){
+        $noqrcode = trim($_POST['noqrcode'] ? $_POST['noqrcode'] : $_GET['noqrcode']);;
+    }else{
+        $noqrcode = "false";
+    }
+    if ($noqrcode == "true") {
+        //轮询请求不需要返回二维码和表单，直接退出
+        return;
+    }
 
-    /********************************************************************************************************
-    POST页面，发送参数传递至 https://api.jsjapp.com/plugin.php?id=add:alipay
-    传递需求参数说明：
-    参数	含义	是否必须	
-    $_POST['addnum']	订单编号：见下面的特别参数说明	可选	特别参数
-    $_POST['total']	交易金额	必须	必须为数字
-    $_POST['showurl']	回调地址（用于接收支付状态）	必须	必须为网址
-    $_POST['uid']	该订单对应会员编号ID：小于8位数	可选	必须为数字  PS：本接口中作为订单号。实际中相比用户ID更易于定位订单。
-    $_POST['apiid']	您的apiid	必须	我站申请
-    $_POST['apikey']	您的apikey 注：需要md5加密： md5(您的apikey)	必须	我站申请
-    
-    ********************************************************************************************************/
+	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
+	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
+		return "<img src='$img' alt='使用支付宝支付'>";
+	}
+
 	$JSJApiPay_Alipay_Web_config['input_charset'] = 'utf-8';
 	$JSJApiPay_Alipay_Web_config['apiid'] = trim($params['apiid']);
 	$JSJApiPay_Alipay_Web_config['apikey'] = trim($params['apikey']);
@@ -57,7 +60,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 	$debug = trim($params["debug"]);
 
 	#Invoice Variables
-	$amount = $params['amount']; # Format: ##.##
+	$amount = trim($params['amount']); # Format: ##.##
 	$invoiceid = $params['invoiceid']; # Invoice ID Number
 	$description = $params['description']; # Description (eg. Company Name - Invoice #xxx)
 	$amount = $params['amount']; # Format: xxx.xx
@@ -69,57 +72,134 @@ function JSJApiPay_Alipay_Web_link($params) {
 	
 	#Special Variables
 
+	#支付提示图片默认可选
+
 	#支付提示图片默认可选：Alipay_01.gif、Alipay_02.png、Alipay_03.png
 	$img = $system_url . "/modules/gateways/JSJApiPay/assets/images/Alipay/Alipay_02.png";
+
+    //转换订单金额
+    if($amount<=9.99){
+        $JSJApiPay_Alipay_Web_config['card_type']=1;
+        $JSJApiPay_Alipay_Web_config['card_number']=ceil($amount/0.01);
+        $JSJApiPay_Alipay_Web_config['card_total']=$JSJApiPay_Alipay_Web_config['card_number']*0.01;
+    }else if($amount<=99.9){
+        $JSJApiPay_Alipay_Web_config['card_type']=2;
+        $JSJApiPay_Alipay_Web_config['card_number']=ceil($amount/0.1);
+        $JSJApiPay_Alipay_Web_config['card_total']=$JSJApiPay_Alipay_Web_config['card_number']*0.1;
+    }else if($amount<=999){
+        $JSJApiPay_Alipay_Web_config['card_type']=3;
+        $JSJApiPay_Alipay_Web_config['card_number']=ceil($amount/1);
+        $JSJApiPay_Alipay_Web_config['card_total']=$JSJApiPay_Alipay_Web_config['card_number']*1;
+    }else if($amount<=9990){
+        $JSJApiPay_Alipay_Web_config['card_type']=4;
+        $JSJApiPay_Alipay_Web_config['card_number']=ceil($amount/10);
+        $JSJApiPay_Alipay_Web_config['card_total']=$JSJApiPay_Alipay_Web_config['card_number']*10;
+    }else if($amount<=99900){
+        $JSJApiPay_Alipay_Web_config['card_type']=5;
+        $JSJApiPay_Alipay_Web_config['card_number']=ceil($amount/100);
+        $JSJApiPay_Alipay_Web_config['card_total']=$JSJApiPay_Alipay_Web_config['card_number']*100;
+    }else{
+        echo "订单金额超限，请联系客服支持。";
+        return;
+    }
 	
-	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return
-	#现已支持HTTPS地址-2016-11-13
-	#$JSJApiPay_Alipay_Web_config['return_url'] = "";
-	$JSJApiPay_Alipay_Web_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=alipay_web&act=return";
-	
-	#以后可能会有专属的API接口(可能吧。)
-	$JSJApiPay_Alipay_Web_config['api_url'] = "https://yun.maweiwangluo.com/pay/ali/submit.php";
+	#API接口设定(此处使用特别接口)
+	$JSJApiPay_Alipay_Web_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_Alipay_Web_config['apiid']."&k=".$JSJApiPay_Alipay_Web_config['card_type']."&g=".$invoiceid;
+	$JSJApiPay_Alipay_Web_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=".$invoiceid;
 
-	/*生成addnum参数:
-	我们允许自定义订单传递过来，变量为 $_POST['addnum']  组合方式为 alip + 您的apiid + 自定义参数
-	其中，自定义参数必须为 数字、字母、或数字字母组合，不能超过18位。组合成功如：alip12345cd3d333233efeef690
-	如果没有传递过来订单号，则系统自动生成订单号。除了商品类，一般的充值类不需要自定义订单号。
-	PS！请不要随意修改！后方回调也会验证。
-	*/
+	//获取平台订单号
+	$curl_create_order_res = curl_init();
+	curl_setopt($curl_create_order_res, CURLOPT_URL, $JSJApiPay_Alipay_Web_config['api_url']);
+	curl_setopt($curl_create_order_res, CURLOPT_TIMEOUT, 3);
+	curl_setopt($curl_create_order_res, CURLOPT_FRESH_CONNECT, 1);
+	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYHOST, true);
+	curl_setopt($curl_create_order_res, CURLOPT_HEADER, 0);
+	curl_setopt($curl_create_order_res, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_create_order_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
+	//存储字符
+	$curl_create_order_res_data = trim(trim(curl_exec($curl_create_order_res)), "\xEF\xBB\xBF");
+	//关闭CURL
+	curl_close($curl_create_order_res);
+    //抽取平台订单号
+	$JSJApiPay_Alipay_Web_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
 
-	$JSJApiPay_Alipay_Web_config['addnum'] = "8".$JSJApiPay_Alipay_Web_config['apiid']."001Invoice".$invoiceid."Ali";
-
-	//基本参数
-	$parameter = array(
-	"_input_charset"=> trim(strtolower($JSJApiPay_Alipay_Web_config['input_charset'])),
-	"addnum"        => trim($JSJApiPay_Alipay_Web_config['addnum']),
-	"amount"        => number_format(trim($amount),2,".",""),
-	"return_url"	=> trim($JSJApiPay_Alipay_Web_config['return_url'])."&invoiceid=".trim($invoiceid),
-	"invoiceid"		=> trim($invoiceid),
-	"apiid"		    => $JSJApiPay_Alipay_Web_config['apiid'],
-	"apikey"		=> strtolower(md5($JSJApiPay_Alipay_Web_config['apikey'])),
-	"api_url"		=> trim($JSJApiPay_Alipay_Web_config['api_url']),
+	//准备获取订单链接参数
+	$curl_create_order_link_res_postfields = array(
+    	"_input_charset"=> trim(strtolower($JSJApiPay_Alipay_Web_config['input_charset'])),
+    	"apiid" => $JSJApiPay_Alipay_Web_config['apiid'],
+    	"addnum" => $JSJApiPay_Alipay_Web_config['addnum'],
+    	"total" => number_format($JSJApiPay_Alipay_Web_config['card_total'],2,".",""),
+    	"usermail" => "",
+    	"num" => $JSJApiPay_Alipay_Web_config['card_number'],
+    	"tid" => $JSJApiPay_Alipay_Web_config['card_type'],
+    	"tel" => "13".date('dH',time()).rand(10000,99999),
+    	"paylei" => "1",//Alipay:1,WeChat:2,QQ:3
 	);
 
+	//提交获取订单链接
+	$curl_create_order_link_res = curl_init();
+	curl_setopt($curl_create_order_link_res, CURLOPT_URL, $JSJApiPay_Alipay_Web_config['api_url_order']);
+	curl_setopt($curl_create_order_link_res, CURLOPT_POST, 1);
+	curl_setopt($curl_create_order_link_res, CURLOPT_TIMEOUT, 3);
+	curl_setopt($curl_create_order_link_res, CURLOPT_FRESH_CONNECT, 1);
+	curl_setopt($curl_create_order_link_res, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($curl_create_order_link_res, CURLOPT_SSL_VERIFYHOST, true);
+	curl_setopt($curl_create_order_link_res, CURLOPT_HEADER, 0);
+	curl_setopt($curl_create_order_link_res, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_create_order_link_res, CURLOPT_POSTFIELDS, $curl_create_order_link_res_postfields);
+	curl_setopt($curl_create_order_link_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
+	//存储字符 
+	$curl_create_order_link_res_data = trim(trim(curl_exec($curl_create_order_link_res)), "\xEF\xBB\xBF");
+	//关闭CURL
+	curl_close($curl_create_order_link_res);
+
+	//获取支付表单
+	$curl_create_form_res = curl_init();
+	curl_setopt($curl_create_form_res, CURLOPT_URL, $curl_create_order_link_res_data);
+	curl_setopt($curl_create_form_res, CURLOPT_TIMEOUT, 10);
+	curl_setopt($curl_create_form_res, CURLOPT_FRESH_CONNECT, 1);
+	curl_setopt($curl_create_form_res, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($curl_create_form_res, CURLOPT_SSL_VERIFYHOST, true);
+	curl_setopt($ch,  CURLOPT_FOLLOWLOCATION, 1);//For 302
+	curl_setopt($curl_create_form_res, CURLOPT_HEADER, 0);
+	curl_setopt($curl_create_form_res, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_create_form_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL Alipay Web");//Use QQ user-agent
+	//存储字符
+	$curl_create_form_res_data = trim(trim(curl_exec($curl_create_form_res)), "\xEF\xBB\xBF");
+    $curl_create_form_res_url = trim(trim(curl_getinfo($curl_create_form_res)["redirect_url"]));
+	//关闭CURL
+	curl_close($curl_create_form_res);
+
+	if ($debug) {
+		$msg="[YM01ApiPay_Alipay_Web]订单: $invoiceid 生成支付表单 $html_code";
+		JSJApiPay_logResult($msg);
+	}
+	$no_service_provider_in_error_message = "false"; //如不希望在错误信息中展示金沙江连接，请设置为true。
+	//return $html_code;
+	if (stristr($curl_create_form_res_data, 'https://mapi.alipay.com/gateway.do?_input_charset=utf-8')) {
+		$curl_create_form_res_data = get_string_between($curl_create_form_res_data, "method='get'>", "<input type='submit'");
+		if (!stristr($curl_create_form_res_data, $JSJApiPay_Alipay_Web_config['addnum'])) {
+		    echo $curl_create_form_res_data;//dev
+			return "<center><b>网关通讯出现偏差，请重试</b></center><button type=\"button\" class=\"btn btn-danger btn-block\" style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新初始化</button>";
+		}
+	} else {
+		return "<center><b>网关通讯出现偏差，请重试</b></center><button type=\"button\" class=\"btn btn-danger btn-block\" style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新初始化</button>";
+	}
 	$html_code = <<<HTML_CODE
 <!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
 <!-- Loading Required JS/CSS -->
 <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
 <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<form name="JSJApiPay_Alipay_Web_form" action="{$parameter['api_url']}" method="POST">
-	<input type="hidden" name="addnum" value="{$parameter['addnum']}">
-	<input type="hidden" name="total" value="{$parameter['amount']}">
-	<input type="hidden" name="showurl" value="{$parameter['return_url']}">
-	<input type="hidden" name="uid" value="{$parameter['invoiceid']}">
-	<input type="hidden" name="apiid" value="{$parameter['apiid']}">
-	<input type="hidden" name="apikey" value="{$parameter['apikey']}">
+<!-- Jquery Polling Invoice & Check Result-->
+<form id='YM02ApiPay_Alipay_Web_form' name='YM02ApiPay_Alipay_Web_form' action='https://mapi.alipay.com/gateway.do?_input_charset=utf-8' method='post'>
+{$curl_create_form_res_data}
 </form>
-<a href="#" onclick="document.forms['JSJApiPay_Alipay_Web_form'].submit();">
+<a href="#" onclick="document.forms['YM02ApiPay_Alipay_Web_form'].submit();">
     <img src="{$img}" alt="点击使用支付宝支付">
 </a>
-<!-- Jquery Polling Invoice & Check Result-->
-<script>
-jQuery(document).ready(function() {
+<script>jQuery(document).ready(function() {
 	var paid_status = false
 	var paid_timer = setInterval(function(){
 		$.ajax({
@@ -151,13 +231,6 @@ jQuery(document).ready(function() {
 	</div>
 </div>
 HTML_CODE;
-
-	/**备用：<a href='#' onclick=\"document.forms['JSJApiPay_Alipay_Web_form'].submit();\"><img src='$img' alt='点击使用支付宝支付'> </a>**/
-
-	if ($debug) {
-		$msg="[YM01ApiPay_Alipay_Web]订单: $invoiceid 生成支付表单 $html_code";
-		JSJApiPay_logResult($msg);
-	}
 	return $html_code;
 }
 ?>
