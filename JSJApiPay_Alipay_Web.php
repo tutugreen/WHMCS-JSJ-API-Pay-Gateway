@@ -180,7 +180,6 @@ function JSJApiPay_Alipay_Web_link($params) {
 	if (stristr($curl_create_form_res_data, 'https://mapi.alipay.com/gateway.do?_input_charset=utf-8')) {
 		$curl_create_form_res_data = get_string_between($curl_create_form_res_data, "method='get'>", "<input type='submit'");
 		if (!stristr($curl_create_form_res_data, $JSJApiPay_Alipay_Web_config['addnum'])) {
-		    echo $curl_create_form_res_data;//dev
 			return "<center><b>网关通讯出现偏差，请重试</b></center><button type=\"button\" class=\"btn btn-danger btn-block\" style=\"margin-top: 10px;\" onclick=\"location.reload();\">重新初始化</button>";
 		}
 	} else {
