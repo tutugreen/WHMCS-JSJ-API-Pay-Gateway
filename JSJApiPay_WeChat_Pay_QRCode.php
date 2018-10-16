@@ -135,7 +135,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
     	"usermail" => "",
     	"num" => $JSJApiPay_WeChat_Pay_QRCode_config['card_number'],
     	"tid" => $JSJApiPay_WeChat_Pay_QRCode_config['card_type'],
-    	"tel" => md5($curl_create_order_res_data),
+    	"tel" => "13".date('dH',time()).rand(10000,99999),
     	"paylei" => "2",//Alipay:1,WeChat:2,QQ:3
 	);
 
