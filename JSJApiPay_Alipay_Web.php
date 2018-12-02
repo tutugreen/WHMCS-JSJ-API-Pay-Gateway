@@ -90,7 +90,7 @@ function JSJApiPay_Alipay_Web_link($params) {
 		"total" => number_format($amount,2,".",""),
 		"apiid" => $JSJApiPay_Alipay_Web_config['apiid'],
 		"apikey" => md5($JSJApiPay_Alipay_Web_config['apikey']),
-		"showurl" => $JSJApiPay_Alipay_Web_config['return_url']."&invoiceid=".trim($invoiceid)."&invoiceid=".trim($invoiceid),
+		"showurl" => $JSJApiPay_Alipay_Web_config['return_url']."&invoiceid=".trim($invoiceid),
 		"uid" => trim($invoiceid),
 		"kid" => 0
 	);

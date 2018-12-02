@@ -93,7 +93,7 @@ function JSJApiPay_QQ_Pay_QRCode_link($params) {
 		"total" => number_format($amount,2,".",""),
 		"apiid" => $JSJApiPay_QQ_Pay_QRCode_config['apiid'],
 		"apikey" => md5($JSJApiPay_QQ_Pay_QRCode_config['apikey']),
-		"showurl" => $JSJApiPay_QQ_Pay_QRCode_config['return_url']."&invoiceid=".trim($invoiceid)."&invoiceid=".trim($invoiceid),
+		"showurl" => $JSJApiPay_QQ_Pay_QRCode_config['return_url']."&invoiceid=".trim($invoiceid),
 		"uid" => trim($invoiceid),
 		"kid" => 0
 	);
