@@ -4,19 +4,19 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2018
+ * @copyright  Copyright (c) Tutugreen.com 2016~2019
  * @license    MIT
- * @version    0.20-2018-10-09-01
+ * @version    0.21-2018-12-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
- * 
+ *
  */
 
 require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Card_Redeem_config() {
-    $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云锁] 卡密兑换 For WHMCS - Code By Tutugreen.com"),
-		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
+	$configarray = array(
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云锁] 卡密兑换 - Code By Tutugreen"),
+		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"https://yun.jsjapp.com/reg.php?tg=MjTsIj35N2D1Q&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？\n邀请通过后阁下将获得10000积分奖励。\nPS：走邀请链接属自愿项目。非正规业务请勿使用。')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"buy_link" => array("FriendlyName" => "购卡页面地址", "Type" => "text", "Size" => "50", "Description" => "[必填]引导用户购买卡密。",),
 		"card_amount_1" => array("FriendlyName" => "卡面金额(1/5)", "Type" => "text", "Size" => "50", "Description" => "[必填]准确填写，例：100.00",),
@@ -26,33 +26,33 @@ function JSJApiPay_Card_Redeem_config() {
 		"card_amount_5" => array("FriendlyName" => "卡面金额(5/5)", "Type" => "text", "Size" => "50", "Description" => "[必填]准确填写，例：100.00",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
 		"debug" => array("FriendlyName" => "调试模式", "Type" => "yesno", "Description" => "调试模式,详细LOG请见[WHMCS]/download/JSJApiPay_log.php，使用文件管理或FTP等查看。", ),
-    );
+	);
 	return $configarray;
 }
 
 function JSJApiPay_Card_Redeem_link($params) {
-    if (!isset($params['apiid'])) { 
-    echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    if (!isset($params['apikey'])) { 
-    echo '$apikey(安全检验码) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    if (!isset($params['fee_acc'])) { 
-    echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    //判断是否需要获取二维码，排除轮询请求节省服务器资源
-    if ($_POST['noqrcode'] or $_GET['noqrcode']){
-        $noqrcode = trim($_POST['noqrcode'] ? $_POST['noqrcode'] : $_GET['noqrcode']);;
-    }else{
-        $noqrcode = "false";
-    }
-    if ($noqrcode == "true") {
-        //轮询请求不需要返回二维码和表单，直接退出
-        return;
-    }
+	if (!isset($params['apiid'])) {
+	echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	if (!isset($params['apikey'])) {
+	echo '$apikey(安全检验码) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	if (!isset($params['fee_acc'])) {
+	echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	//判断是否需要获取二维码，排除轮询请求节省服务器资源
+	if ($_POST['noqrcode'] or $_GET['noqrcode']){
+		$noqrcode = trim($_POST['noqrcode'] ? $_POST['noqrcode'] : $_GET['noqrcode']);;
+	}else{
+		$noqrcode = "false";
+	}
+	if ($noqrcode == "true") {
+		//轮询请求不需要返回二维码和表单，直接退出
+		return;
+	}
 
 	$JSJApiPay_Card_Redeem_config['input_charset'] = 'utf-8';
 	$JSJApiPay_Card_Redeem_config['apiid'] = trim($params['apiid']);
@@ -73,14 +73,13 @@ function JSJApiPay_Card_Redeem_link($params) {
 	$amount = $params['amount']; # Format: xxx.xx
 	$currency = $params['currency']; # Currency Code (eg. GBP, USD, etc...
 
-    #System Variables
+	#System Variables
 	$companyname = $params['companyname'];
 	$system_url = rtrim($params['systemurl'], "/");
-	
+
 	#Special Variables
-	
+
 	#如需要指定HTTP/HTTPS可手动修改，参考格式：https://prpr.cloud/modules/gateways/callback/JSJApiPay_callback.php?payment_type=card_redeem&act=return
-	#现已支持HTTPS地址-2016-11-13
 	#$JSJApiPay_Card_Redeem_config['return_url'] = "";
 	$JSJApiPay_Card_Redeem_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php";
 
@@ -115,75 +114,75 @@ function JSJApiPay_Card_Redeem_link($params) {
 	}
 
 	$html_code = <<<HTML_CODE
-<!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
-<!-- Loading Required JS/CSS -->
-<script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
-<script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-<form action="{$JSJApiPay_Card_Redeem_config['return_url']}" method="POST">
-    <input type="hidden" name="payment_type" value="card_redeem">
-    <input type="hidden" name="act" value="redeem">
-    <input type="hidden" name="invoiceid" value="{$parameter['invoiceid']}">
-    <fieldset class="form-group">
-        <label for="card_type">选择卡类型</label>
-        <select class="form-control" id="card_type" name="card_type">
-            <option>请选择</option>
-            <option value="1">{$JSJApiPay_Card_Redeem_config['card_amount_1']} CNY</option>
-            <option value="2">{$JSJApiPay_Card_Redeem_config['card_amount_2']} CNY</option>
-            <option value="3">{$JSJApiPay_Card_Redeem_config['card_amount_3']} CNY</option>
-            <option value="4">{$JSJApiPay_Card_Redeem_config['card_amount_4']} CNY</option>
-            <option value="5">{$JSJApiPay_Card_Redeem_config['card_amount_5']} CNY</option>
-        </select>
-        <small class="text-muted">需与卡面金额一致，结余充入账户余额。</small>
-    </fieldset>
-    <fieldset class="form-group">
-        <label for="card">卡密</label>
-        <input type="password" class="form-control" id="card" name="card" placeholder="例：21A0CCC6D16E99966756A87976E3A197">
-        <small class="text-muted">账单可多次兑换，一次兑换一张。</small>
-    </fieldset>
-    <button type="submit" class="btn btn-primary">核销</button>
-    <a class="btn btn-primary" href="{$JSJApiPay_Card_Redeem_config['buy_link']}" target="_blank">购买卡</a>
-</form>
-<!-- Jquery Polling Invoice & Check Result-->
-<script>
-jQuery(document).ready(function() {
-	var paid_status = false
-	var paid_timer = setInterval(function(){
-		$.ajax({
-			type: "post",
-			url : window.location.href,
-			data : {noqrcode: "true"},
-			dataType : "text",
-			success: function(data){
-				if ( data.indexOf('class="'+"paid"+'"') != -1)
-				{
-					clearInterval(paid_timer)
-					$('#paysuccess').modal('show')
-					setTimeout(function(){location.reload()},3000)
-				}
-			}})
-	},1500)
-})
-</script>
-<div class="modal fade" id="paysuccess">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title"><p class="text-success">支付成功</p></h4>
-			</div>
-			<div class="modal-body">
-				<p>本页面将在3秒后刷新</p>
-			</div>
-		</div>
-	</div>
-</div>
+<!-- Powered By yun.jsjapp.com , Coded By Tutugreen.com -->
+							<!-- Loading Required JS/CSS -->
+							<script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+							<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+							<script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+							<form action="{$JSJApiPay_Card_Redeem_config['return_url']}" method="POST">
+								<input type="hidden" name="payment_type" value="card_redeem">
+								<input type="hidden" name="act" value="redeem">
+								<input type="hidden" name="invoiceid" value="{$parameter['invoiceid']}">
+								<fieldset class="form-group">
+									<label for="card_type">选择卡类型</label>
+									<select class="form-control" id="card_type" name="card_type">
+										<option>请选择</option>
+										<option value="1">{$JSJApiPay_Card_Redeem_config['card_amount_1']} CNY</option>
+										<option value="2">{$JSJApiPay_Card_Redeem_config['card_amount_2']} CNY</option>
+										<option value="3">{$JSJApiPay_Card_Redeem_config['card_amount_3']} CNY</option>
+										<option value="4">{$JSJApiPay_Card_Redeem_config['card_amount_4']} CNY</option>
+										<option value="5">{$JSJApiPay_Card_Redeem_config['card_amount_5']} CNY</option>
+									</select>
+									<small class="text-muted">需与卡面金额一致，结余充入账户余额。</small>
+								</fieldset>
+								<fieldset class="form-group">
+									<label for="card">卡密</label>
+									<input type="password" class="form-control" id="card" name="card" placeholder="例：21A0CCC6D16E99966756A87976E3A197">
+									<small class="text-muted">账单可多次兑换，一次兑换一张。</small>
+								</fieldset>
+								<button type="submit" class="btn btn-primary">核销</button>
+								<a class="btn btn-primary" href="{$JSJApiPay_Card_Redeem_config['buy_link']}" target="_blank">购买卡</a>
+							</form>
+							<!-- Jquery Polling Invoice & Check Result-->
+							<script>
+							jQuery(document).ready(function() {
+								var paid_status = false
+								var paid_timer = setInterval(function(){
+									$.ajax({
+										type: "post",
+										url : window.location.href,
+										data : {noqrcode: "true"},
+										dataType : "text",
+										success: function(data){
+											if ( data.indexOf('class="'+"paid"+'"') != -1)
+											{
+												clearInterval(paid_timer)
+												$('#paysuccess').modal('show')
+												setTimeout(function(){location.reload()},3000)
+											}
+										}})
+								},1500)
+							})
+							</script>
+							<div class="modal fade" id="paysuccess">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title"><p class="text-success">支付成功</p></h4>
+										</div>
+										<div class="modal-body">
+											<p>本页面将在3秒后刷新</p>
+										</div>
+									</div>
+								</div>
+							</div>
 HTML_CODE;
 
 	if ($debug) {
 		$msg="[YM01ApiPay_card_redeem]订单: $invoiceid 生成支付表单 $html_code";
 		JSJApiPay_logResult($msg);
 	}
- 	return $html_code;
+	return $html_code;
 
 }
 ?>

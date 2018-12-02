@@ -4,49 +4,49 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2018
+ * @copyright  Copyright (c) Tutugreen.com 2016~2019
  * @license    MIT
- * @version    0.20-2018-10-09-01
+ * @version    0.21-2018-12-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
- * 
+ *
  */
 
 require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Card_Connect_config() {
-    $configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 聚合扫码支付 即时到账API接口 For WHMCS - Code By Tutugreen.com"),
-		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
+	$configarray = array(
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 聚合扫码支付 - Code By Tutugreen"),
+		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"https://yun.jsjapp.com/reg.php?tg=MjTsIj35N2D1Q&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？\n邀请通过后阁下将获得10000积分奖励。\nPS：走邀请链接属自愿项目。非正规业务请勿使用。')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
 		"debug" => array("FriendlyName" => "调试模式", "Type" => "yesno", "Description" => "调试模式,详细LOG请见[WHMCS]/download/JSJApiPay_log.php，使用文件管理或FTP等查看。", ),
-    );
+	);
 	return $configarray;
 }
 
 function JSJApiPay_Card_Connect_link($params) {
-    if (!isset($params['apiid'])) { 
-    echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    if (!isset($params['apikey'])) { 
-    echo '$apikey(安全检验码) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    if (!isset($params['fee_acc'])) { 
-    echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
-    exit;
-    }
-    //判断是否需要获取二维码，排除轮询请求节省服务器资源
-    if ($_POST['noqrcode'] or $_GET['noqrcode']){
-        $noqrcode = trim($_POST['noqrcode'] ? $_POST['noqrcode'] : $_GET['noqrcode']);;
-    }else{
-        $noqrcode = "false";
-    }
-    if ($noqrcode == "true") {
-        //轮询请求不需要返回二维码和表单，直接退出
-        return;
-    }
+	if (!isset($params['apiid'])) {
+	echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	if (!isset($params['apikey'])) {
+	echo '$apikey(安全检验码) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	if (!isset($params['fee_acc'])) {
+	echo '$fee_acc(记账手续费) 为必填项目，请在后台-系统设置-付款-支付接口设置，Manage Existing Gateways 选项卡中设置。';
+	exit;
+	}
+	//判断是否需要获取二维码，排除轮询请求节省服务器资源
+	if ($_POST['noqrcode'] or $_GET['noqrcode']){
+		$noqrcode = trim($_POST['noqrcode'] ? $_POST['noqrcode'] : $_GET['noqrcode']);;
+	}else{
+		$noqrcode = "false";
+	}
+	if ($noqrcode == "true") {
+		//轮询请求不需要返回二维码和表单，直接退出
+		return;
+	}
 
 	$JSJApiPay_Card_Connect_config['input_charset'] = 'utf-8';
 	$JSJApiPay_Card_Connect_config['apiid'] = trim($params['apiid']);
@@ -61,10 +61,10 @@ function JSJApiPay_Card_Connect_link($params) {
 	$amount = $params['amount']; # Format: xxx.xx
 	$currency = $params['currency']; # Currency Code (eg. GBP, USD, etc...
 
-    #System Variables
+	#System Variables
 	$companyname = $params['companyname'];
 	$system_url = rtrim($params['systemurl'], "/");
-	
+
 	#Special Variables
 
 	#支付提示图片默认可选
@@ -81,32 +81,32 @@ function JSJApiPay_Card_Connect_link($params) {
 		return "<img src='".$img["Alipay_Logo"]."' alt='欢迎使用 支付宝 支付' style=\"height: 5.5em;margin: 2em 3.7em;\"/><img src='".$img["WeChat_Pay_Logo"]."' alt='欢迎使用 微信 支付'  style=\"height: 9em;\"/><img src='".$img["QQ_Pay_Logo"]."' alt='欢迎使用 QQ 支付' style=\"height: 8em;\"/>";
 	}
 
-    //转换订单金额
-    if($amount<=9.99){
-        $JSJApiPay_Card_Connect_config['card_type']=1;
-        $JSJApiPay_Card_Connect_config['card_number']=ceil($amount/0.01);
-        $JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*0.01;
-    }else if($amount<=99.9){
-        $JSJApiPay_Card_Connect_config['card_type']=2;
-        $JSJApiPay_Card_Connect_config['card_number']=ceil($amount/0.1);
-        $JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*0.1;
-    }else if($amount<=999){
-        $JSJApiPay_Card_Connect_config['card_type']=3;
-        $JSJApiPay_Card_Connect_config['card_number']=ceil($amount/1);
-        $JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*1;
-    }else if($amount<=9990){
-        $JSJApiPay_Card_Connect_config['card_type']=4;
-        $JSJApiPay_Card_Connect_config['card_number']=ceil($amount/10);
-        $JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*10;
-    }else if($amount<=99900){
-        $JSJApiPay_Card_Connect_config['card_type']=5;
-        $JSJApiPay_Card_Connect_config['card_number']=ceil($amount/100);
-        $JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*100;
-    }else{
-        echo "订单金额超限，请联系客服支持。";
-        return;
-    }
-	
+	//转换订单金额
+	if($amount<=9.99){
+		$JSJApiPay_Card_Connect_config['card_type']=1;
+		$JSJApiPay_Card_Connect_config['card_number']=ceil($amount/0.01);
+		$JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*0.01;
+	}else if($amount<=99.9){
+		$JSJApiPay_Card_Connect_config['card_type']=2;
+		$JSJApiPay_Card_Connect_config['card_number']=ceil($amount/0.1);
+		$JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*0.1;
+	}else if($amount<=999){
+		$JSJApiPay_Card_Connect_config['card_type']=3;
+		$JSJApiPay_Card_Connect_config['card_number']=ceil($amount/1);
+		$JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*1;
+	}else if($amount<=9990){
+		$JSJApiPay_Card_Connect_config['card_type']=4;
+		$JSJApiPay_Card_Connect_config['card_number']=ceil($amount/10);
+		$JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*10;
+	}else if($amount<=99900){
+		$JSJApiPay_Card_Connect_config['card_type']=5;
+		$JSJApiPay_Card_Connect_config['card_number']=ceil($amount/100);
+		$JSJApiPay_Card_Connect_config['card_total']=$JSJApiPay_Card_Connect_config['card_number']*100;
+	}else{
+		echo "订单金额超限，请联系客服支持。";
+		return;
+	}
+
 	#API接口设定(此处使用特别接口)
 	$JSJApiPay_Card_Connect_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_Card_Connect_config['apiid']."&k=".$JSJApiPay_Card_Connect_config['card_type']."&g=".$invoiceid;
 	$JSJApiPay_Card_Connect_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=".$invoiceid;
@@ -125,20 +125,20 @@ function JSJApiPay_Card_Connect_link($params) {
 	$curl_create_order_res_data = trim(trim(curl_exec($curl_create_order_res)), "\xEF\xBB\xBF");
 	//关闭CURL
 	curl_close($curl_create_order_res);
-    //抽取平台订单号
+	//抽取平台订单号
 	$JSJApiPay_Card_Connect_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
 
 	//准备获取订单链接参数
 	$curl_create_qrcode_res_postfields = array(
-    	"_input_charset"=> trim(strtolower($JSJApiPay_Card_Connect_config['input_charset'])),
-    	"apiid" => $JSJApiPay_Card_Connect_config['apiid'],
-    	"addnum" => $JSJApiPay_Card_Connect_config['addnum'],
-    	"total" => number_format($JSJApiPay_Card_Connect_config['card_total'],2,".",""),
-    	"usermail" => "",
-    	"num" => $JSJApiPay_Card_Connect_config['card_number'],
-    	"tid" => $JSJApiPay_Card_Connect_config['card_type'],
-    	"tel" => "13".date('dH',time()).rand(10000,99999),
-    	"paylei" => "1",//Alipay:1,WeChat:2,QQ:3
+		"_input_charset"=> trim(strtolower($JSJApiPay_Card_Connect_config['input_charset'])),
+		"apiid" => $JSJApiPay_Card_Connect_config['apiid'],
+		"addnum" => $JSJApiPay_Card_Connect_config['addnum'],
+		"total" => number_format($JSJApiPay_Card_Connect_config['card_total'],2,".",""),
+		"usermail" => "",
+		"num" => $JSJApiPay_Card_Connect_config['card_number'],
+		"tid" => $JSJApiPay_Card_Connect_config['card_type'],
+		"tel" => "13".date('dH',time()).rand(10000,99999),
+		"paylei" => "1",//Alipay:1,WeChat:2,QQ:3
 	);
 
 	//提交获取订单链接
@@ -153,11 +153,11 @@ function JSJApiPay_Card_Connect_link($params) {
 	curl_setopt($curl_create_qrcode_res, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_POSTFIELDS, $curl_create_qrcode_res_postfields);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
-	//存储字符 
+	//存储字符
 	$curl_create_qrcode_res_url = trim(trim(curl_exec($curl_create_qrcode_res)), "\xEF\xBB\xBF");
 	//关闭CURL
 	curl_close($curl_create_qrcode_res);
-	
+
 	//按钮判断是否为移动端
 	if (isMobile()) {
 		$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="javascript:window.open(\''.$curl_create_qrcode_res_url.'\');">使用本机支付</button><button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
@@ -186,7 +186,7 @@ function JSJApiPay_Card_Connect_link($params) {
 		width	:	230,
 		height	:	230,
 		text	:	'{$curl_create_qrcode_res_url}'
-	});	
+	});
 </script>
 <script>
 	$(function () { $("[data-toggle='tooltip']").tooltip({html : true }); });

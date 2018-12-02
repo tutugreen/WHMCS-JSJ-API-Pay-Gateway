@@ -4,11 +4,11 @@
  *
  * @For    	   WHMCS 6+
  * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2018
+ * @copyright  Copyright (c) Tutugreen.com 2016~2019
  * @license    MIT
- * @version    0.20-2018-10-09-01
+ * @version    0.21-2018-12-02-01
  * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
- * 
+ *
  */
 
 /**
@@ -27,18 +27,18 @@ function JSJApiPay_logResult($word='',$file="../../../downloads/JSJApiPay_log.ph
 
 /*移动端判断*/
 function isMobile()
-{ 
+{
 	// 如果有HTTP_X_WAP_PROFILE则一定是移动设备
 	if (isset ($_SERVER['HTTP_X_WAP_PROFILE']))
 	{
 		return true;
-	} 
+	}
 	// 如果via信息含有wap则一定是移动设备,部分服务商会屏蔽该信息
 	if (isset ($_SERVER['HTTP_VIA']))
-	{ 
+	{
 		// 找不到为flase,否则为true
 		return stristr($_SERVER['HTTP_VIA'], "wap") ? true : false;
-	} 
+	}
 	// 脑残法，判断手机发送的客户端标志,兼容性有待提高
 	if (isset ($_SERVER['HTTP_USER_AGENT']))
 	{
@@ -74,34 +74,34 @@ function isMobile()
 			'midp',
 			'wap',
 			'mobile'
-			); 
+			);
 		// 从HTTP_USER_AGENT中查找手机浏览器的关键字
 		if (preg_match("/(" . implode('|', $clientkeywords) . ")/i", strtolower($_SERVER['HTTP_USER_AGENT'])))
 		{
 			return true;
-		} 
-	} 
+		}
+	}
 	// 协议法，因为有可能不准确，放到最后判断
 	if (isset ($_SERVER['HTTP_ACCEPT']))
-	{ 
+	{
 		// 如果只支持wml并且不支持html那一定是移动设备
 		// 如果支持wml和html但是wml在html之前则是移动设备
 		if ((strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') !== false) && (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') === false || (strpos($_SERVER['HTTP_ACCEPT'], 'vnd.wap.wml') < strpos($_SERVER['HTTP_ACCEPT'], 'text/html'))))
 		{
 			return true;
-		} 
-	} 
+		}
+	}
 	return false;
 }
 
 //字符串截取
 function get_string_between($string, $start, $end){
-    $string = ' ' . $string;
-    $ini = strpos($string, $start);
-    if ($ini == 0) return '';
-    $ini += strlen($start);
-    $len = strpos($string, $end, $ini) - $ini;
-    return substr($string, $ini, $len);
+	$string = ' ' . $string;
+	$ini = strpos($string, $start);
+	if ($ini == 0) return '';
+	$ini += strlen($start);
+	$len = strpos($string, $end, $ini) - $ini;
+	return substr($string, $ini, $len);
 }
 
 ?>
