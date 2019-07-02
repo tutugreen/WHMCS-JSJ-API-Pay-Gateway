@@ -1,13 +1,11 @@
 <?php
 /**
- * @WHMCS-JSJ-API-Pay-Gateway
+ * WHMCS-JSJ-API-Pay-Gateway
  *
- * @For    	   WHMCS 6+
- * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2019
- * @license    MIT
- * @version    0.21-2018-12-02-01
- * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
+ * @author tutugreen (yuanming@tutugreen.com)
+ * @copyright Copyright (c) 2016~2019 Tutugreen.com
+ * @license MIT
+ * @link	https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  *
  */
 
@@ -15,7 +13,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_WeChat_Pay_QRCode_config() {
 	$configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 微信扫码支 - Code By Tutugreen"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 微信扫码支 - @tutugreen"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -198,7 +196,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	}
 
 	$html_code = <<<HTML_CODE
-<!-- Powered By api.jsjapp.com , Coded By Tutugreen.com -->
+<!-- Powered By api.jsjapp.com , Plugin By @tutugreen -->
 <!-- Loading Required JS/CSS -->
 <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 <script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>

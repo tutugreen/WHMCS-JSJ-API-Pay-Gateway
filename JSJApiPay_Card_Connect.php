@@ -132,7 +132,7 @@ function JSJApiPay_Card_Connect_link($params) {
 	$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝<!--、微信、QQ--> 扫码支付，可轻触\'立即支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 
 	$html_code = <<<HTML_CODE
-<!-- Powered By yun.jsjapp.com , Coded By @tutugreen -->
+<!-- Powered By yun.jsjapp.com , Plugin By @tutugreen -->
 							<!-- Loading Required JS/CSS -->
 							<script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 							<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
