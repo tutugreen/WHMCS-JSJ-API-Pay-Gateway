@@ -1,13 +1,11 @@
 <?php
 /**
- * @WHMCS-JSJ-API-Pay-Gateway
+ * WHMCS-JSJ-API-Pay-Gateway
  *
- * @For    	   WHMCS 6+
- * @author     tutugreen (yuanming@tutugreen.com)
- * @copyright  Copyright (c) Tutugreen.com 2016~2019
- * @license    MIT
- * @version    0.21-2018-12-02-01
- * @link       https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
+ * @author tutugreen (yuanming@tutugreen.com)
+ * @copyright Copyright (c) 2016~2019 Tutugreen.com
+ * @license MIT
+ * @link	https://github.com/tutugreen/WHMCS-JSJ-API-Pay-Gateway
  *
  */
 
@@ -15,7 +13,7 @@ require_once("JSJApiPay/JSJApiPay.class.php");
 
 function JSJApiPay_Card_Connect_config() {
 	$configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 聚合支付 - Code By Tutugreen"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 聚合支付 - @tutugreen"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"https://yun.jsjapp.com/reg.php?tg=MjTsIj35N2D1Q&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？\n邀请通过后阁下将获得10000积分奖励。\nPS：走邀请链接属自愿项目。非正规业务请勿使用。')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -87,7 +85,7 @@ function JSJApiPay_Card_Connect_link($params) {
 
 	#API接口设定
 	$JSJApiPay_Card_Connect_config['api_url'] = "https://yun.jsjapp.com/k/qr.php";
-	$JSJApiPay_Card_Connect_config['api_post_url'] = "https://yun.maweiwangluo.com/u/";
+	$JSJApiPay_Card_Connect_config['api_post_url'] = "https://yun.xunchu.net/u/";
 
 	//准备获取订单号参数
 	$curl_create_order_res_postfields = array(
@@ -126,14 +124,15 @@ function JSJApiPay_Card_Connect_link($params) {
 	if (isMobile()) {
 		$curl_create_qrcode_res_url['button']=$curl_create_qrcode_res_url['qrcode'];
 	} else {
-		$curl_create_qrcode_res_url['button']=$curl_create_qrcode_res_url['qrcode']."?pc=yes";
+		$curl_create_qrcode_res_url['button']=$curl_create_qrcode_res_url['qrcode'];
+		//$curl_create_qrcode_res_url['button']=$curl_create_qrcode_res_url['qrcode']."?pc=yes";//2019-07-02:适配临时接口，取消PC端接入
 	}
 
-	$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="javascript:window.open(\''.$curl_create_qrcode_res_url["button"].'\');">立即支付</button><button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
-	$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝、微信、QQ 扫码支付，可轻触\'立即支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+	$button_below_QRCode='<button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="javascript:window.open(\''.$curl_create_qrcode_res_url["button"].'\');">立即支付 (支付宝)</button><button type="button" class="btn btn-info btn-block" style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>';
+	$tooltip_QRCode_info='<div id="JSJApiPay_Card_Connect_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用 支付宝<!--、微信、QQ--> 扫码支付，可轻触\'立即支付\'在本机支付</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 
 	$html_code = <<<HTML_CODE
-<!-- Powered By yun.jsjapp.com , Coded By Tutugreen.com -->
+<!-- Powered By yun.jsjapp.com , Coded By @tutugreen -->
 							<!-- Loading Required JS/CSS -->
 							<script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
 							<script type="text/javascript" src="//cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
