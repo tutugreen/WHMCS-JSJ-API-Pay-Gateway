@@ -34,6 +34,8 @@ if ($_POST['payment_type'] or $_GET['payment_type']){
 		$gatewaymodule = "JSJApiPay_Alipay_QRCode";
 	} elseif ($incoming_payment_type == 'wechat_pay_qrcode'){
 		$gatewaymodule = "JSJApiPay_WeChat_Pay_QRCode";
+	} elseif ($incoming_payment_type == 'wechat_pay_qrcode_native'){
+		$gatewaymodule = "JSJApiPay_WeChat_Pay_QRCode_Native";
 	} elseif ($incoming_payment_type == 'qq_pay_qrcode'){
 		$gatewaymodule = "JSJApiPay_QQ_Pay_QRCode";
 	} elseif ($incoming_payment_type == 'card_redeem'){
@@ -314,7 +316,7 @@ HTML_CODE;
 
 		//验证回调key
 
-        if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode" or $gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode" or $gatewaymodule == "JSJApiPay_Card_Connect"){
+        if ($gatewaymodule == "JSJApiPay_Alipay_Web" or $gatewaymodule == "JSJApiPay_Alipay_Wap" or $gatewaymodule == "JSJApiPay_Alipay_QRCode" or $gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode" or $gatewaymodule == "JSJApiPay_WeChat_Pay_QRCode_Native" or $gatewaymodule == "JSJApiPay_QQ_Pay_QRCode" or $gatewaymodule == "JSJApiPay_Card_Connect"){
 			if($apikey == md5($JSJApiPay_config['apikey'].$addnum.$invoiceid.$amount)){
 				$apikey_validate_result = "Success";
 			} else {

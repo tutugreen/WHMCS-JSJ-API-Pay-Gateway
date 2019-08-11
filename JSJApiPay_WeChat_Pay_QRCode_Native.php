@@ -11,9 +11,9 @@
 
 require_once("JSJApiPay/JSJApiPay.class.php");
 
-function JSJApiPay_WeChat_Pay_QRCode_config() {
+function JSJApiPay_WeChat_Pay_QRCode_Native_config() {
 	$configarray = array(
-		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 微信扫码支付 - @tutugreen"),
+		"FriendlyName" => array("Type" => "System", "Value"=>"金莎云[云发卡] 微信扫码支付独立版 - @tutugreen"),
 		"apiid" => array("FriendlyName" => "合作伙伴ID(APIID)", "Type" => "text", "Size" => "25","Description" => "[必填]到你的API后台查找，没有账户的请在 <a href=\"http://api.jsjapp.com/plugin.php?id=add:user&apiid=12744&from=whmcs\" target=\"_blank\" onclick=\"return confirm('此链接为邀请链接，是否同意接口开发者成为阁下的邀请人？')\">这里注册</a> ", ),
 		"apikey" => array("FriendlyName" => "安全检验码(APIKEY)", "Type" => "text", "Size" => "50", "Description" => "[必填]同上",),
 		"fee_acc" => array("FriendlyName" => "记账手续费[仅显示]", "Type" => "text", "Size" => "50", "Description" => "[必填,不填会报错]默认0，如填写0.01，即是1%手续费，用于WHMCS记账时后台显示和统计，不影响实际支付价格。",),
@@ -22,7 +22,7 @@ function JSJApiPay_WeChat_Pay_QRCode_config() {
 	return $configarray;
 }
 
-function JSJApiPay_WeChat_Pay_QRCode_link($params) {
+function JSJApiPay_WeChat_Pay_QRCode_Native_link($params) {
 	if (!isset($params['apiid'])) {
 	echo '$apiid(合作伙伴ID) 为必填项目，请在后台-系统设置-付款-支付接口，Manage Existing Gateways 选项卡中设置。';
 	exit;
@@ -46,10 +46,10 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 		return;
 	}
 
-	$JSJApiPay_WeChat_Pay_QRCode_config['input_charset'] = 'utf-8';
-	$JSJApiPay_WeChat_Pay_QRCode_config['apiid'] = trim($params['apiid']);
-	$JSJApiPay_WeChat_Pay_QRCode_config['apikey'] = trim($params['apikey']);
-	$JSJApiPay_WeChat_Pay_QRCode_config['fee_acc'] = trim($params['fee_acc']);
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['input_charset'] = 'utf-8';
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['apiid'] = trim($params['apiid']);
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['apikey'] = trim($params['apikey']);
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['fee_acc'] = trim($params['fee_acc']);
 	$debug = trim($params["debug"]);
 
 	#Invoice Variables
@@ -72,104 +72,59 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	//发票二维码嵌入ICON
 	$img["WeChat_Pay_QR_ICON"] = $system_url . "/modules/gateways/JSJApiPay/assets/images/WeChat_Pay/WeChat_Pay_Money_Icon.png";
 
+	#默认跟随WHMCS系统设置-常规设置，如需要指定HTTP/HTTPS可手动修改，参考格式：https://yoursite.com/modules/gateways/callback/JSJApiPay_callback.php?payment_type=wechat_pay_qrcode_native&act=return
+	#$JSJApiPay_WeChat_Pay_QRCode_Native_config['return_url'] = "";
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['return_url'] = $system_url . "/modules/gateways/callback/JSJApiPay_callback.php?payment_type=wechat_pay_qrcode_native&act=return";
+
 	//判断是否已抵达账单页面，兼容手续费插件，减少账单金额更改几率
 	if (!stristr($_SERVER['PHP_SELF'], 'viewinvoice')) {
 		return "<img src='".$img["WeChat_Pay_Logo"]."' alt='使用微信支付'>";
 	}
 
-	//转换订单金额
-	if($amount<=9.99){
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_type']=1;
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_number']=ceil($amount/0.01);
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_total']=$JSJApiPay_WeChat_Pay_QRCode_config['card_number']*0.01;
-	}else if($amount<=99.9){
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_type']=2;
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_number']=ceil($amount/0.1);
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_total']=$JSJApiPay_WeChat_Pay_QRCode_config['card_number']*0.1;
-	}else if($amount<=999){
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_type']=3;
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_number']=ceil($amount/1);
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_total']=$JSJApiPay_WeChat_Pay_QRCode_config['card_number']*1;
-	}else if($amount<=9990){
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_type']=4;
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_number']=ceil($amount/10);
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_total']=$JSJApiPay_WeChat_Pay_QRCode_config['card_number']*10;
-	}else if($amount<=99900){
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_type']=5;
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_number']=ceil($amount/100);
-		$JSJApiPay_WeChat_Pay_QRCode_config['card_total']=$JSJApiPay_WeChat_Pay_QRCode_config['card_number']*100;
+	//检查订单金额
+	if($amount<=1000){
+		$JSJApiPay_WeChat_Pay_QRCode_Native_config['total']=$amount;
 	}else{
 		echo "订单金额超限，请联系客服支持。";
 		return;
 	}
 
 	#API接口设定(此处使用特别接口)
-	$JSJApiPay_WeChat_Pay_QRCode_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_WeChat_Pay_QRCode_config['apiid']."&k=".$JSJApiPay_WeChat_Pay_QRCode_config['card_type']."&g=".$invoiceid;
-	$JSJApiPay_WeChat_Pay_QRCode_config['api_url_order'] = "https://yun.jsjapp.com/k/order.php?suid=".$invoiceid;
+	//$JSJApiPay_WeChat_Pay_QRCode_Native_config['api_url'] = "https://yun.jsjapp.com/k/show.php?u=".$JSJApiPay_WeChat_Pay_QRCode_Native_config['apiid']."&k=".$JSJApiPay_WeChat_Pay_QRCode_Native_config['card_type']."&g=".$invoiceid;
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['api_url'] = "https://yun.jsjapp.com/wxpay/native.php";
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['api_url_order'] = "https://yun.jsjapp.com/wxpay/pay.php?order=";
+
+	//准备获取订单号参数
+	$curl_create_order_res_postfields = array(
+		"_input_charset"=> trim(strtolower($JSJApiPay_WeChat_Pay_QRCode_Native_config['input_charset'])),
+		"apiid" => $JSJApiPay_WeChat_Pay_QRCode_Native_config['apiid'],
+		"apikey" => md5(trim($JSJApiPay_WeChat_Pay_QRCode_Native_config['apikey'])),
+		"total" => number_format($JSJApiPay_WeChat_Pay_QRCode_Native_config['total'],2,".",""),
+		"showurl" => $JSJApiPay_WeChat_Pay_QRCode_Native_config['return_url'],
+		"uid" => trim($invoiceid),
+		//"kid" => "0", //卡种类编号，可留	空
+	);
 
 	//获取平台订单号
 	$curl_create_order_res = curl_init();
-	curl_setopt($curl_create_order_res, CURLOPT_URL, $JSJApiPay_WeChat_Pay_QRCode_config['api_url']);
+	curl_setopt($curl_create_order_res, CURLOPT_URL, $JSJApiPay_WeChat_Pay_QRCode_Native_config['api_url']);
 	curl_setopt($curl_create_order_res, CURLOPT_TIMEOUT, 3);
 	curl_setopt($curl_create_order_res, CURLOPT_FRESH_CONNECT, 1);
 	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($curl_create_order_res, CURLOPT_SSL_VERIFYHOST, true);
 	curl_setopt($curl_create_order_res, CURLOPT_HEADER, 0);
 	curl_setopt($curl_create_order_res, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($curl_create_order_res, CURLOPT_POSTFIELDS, $curl_create_order_res_postfields);
 	curl_setopt($curl_create_order_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
 	//存储字符
 	$curl_create_order_res_data = trim(trim(curl_exec($curl_create_order_res)), "\xEF\xBB\xBF");
 	//关闭CURL
 	curl_close($curl_create_order_res);
 	//抽取平台订单号
-	$JSJApiPay_WeChat_Pay_QRCode_config['addnum'] = trim(trim(get_string_between($curl_create_order_res_data, 'addnum:"', '"')));
-
-	//准备获取订单链接参数
-	$curl_create_order_link_res_postfields = array(
-		"_input_charset"=> trim(strtolower($JSJApiPay_WeChat_Pay_QRCode_config['input_charset'])),
-		"apiid" => $JSJApiPay_WeChat_Pay_QRCode_config['apiid'],
-		"addnum" => $JSJApiPay_WeChat_Pay_QRCode_config['addnum'],
-		"total" => number_format($JSJApiPay_WeChat_Pay_QRCode_config['card_total'],2,".",""),
-		"usermail" => "",
-		"num" => $JSJApiPay_WeChat_Pay_QRCode_config['card_number'],
-		"tid" => $JSJApiPay_WeChat_Pay_QRCode_config['card_type'],
-		"tel" => "13".date('dH',time()).rand(10000,99999),
-		"paylei" => "2",//Alipay:1,WeChat:2,QQ:3
-	);
-
-	//提交获取订单链接
-	$curl_create_order_link_res = curl_init();
-	curl_setopt($curl_create_order_link_res, CURLOPT_URL, $JSJApiPay_WeChat_Pay_QRCode_config['api_url_order']);
-	curl_setopt($curl_create_order_link_res, CURLOPT_POST, 1);
-	curl_setopt($curl_create_order_link_res, CURLOPT_TIMEOUT, 3);
-	curl_setopt($curl_create_order_link_res, CURLOPT_FRESH_CONNECT, 1);
-	curl_setopt($curl_create_order_link_res, CURLOPT_SSL_VERIFYPEER, true);
-	curl_setopt($curl_create_order_link_res, CURLOPT_SSL_VERIFYHOST, true);
-	curl_setopt($curl_create_order_link_res, CURLOPT_HEADER, 0);
-	curl_setopt($curl_create_order_link_res, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_create_order_link_res, CURLOPT_POSTFIELDS, $curl_create_order_link_res_postfields);
-	curl_setopt($curl_create_order_link_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL");
-	//存储字符
-	$curl_create_order_link_res_data = trim(trim(curl_exec($curl_create_order_link_res)), "\xEF\xBB\xBF");
-	//关闭CURL
-	curl_close($curl_create_order_link_res);
-
-	//获取跳转链接
-	$curl_get_link_res = curl_init();
-	curl_setopt($curl_get_link_res, CURLOPT_URL, $curl_create_order_link_res_data);
-	curl_setopt($curl_get_link_res, CURLOPT_TIMEOUT, 3);
-	curl_setopt($curl_get_link_res, CURLOPT_FRESH_CONNECT, 1);
-	curl_setopt($curl_get_link_res, CURLOPT_SSL_VERIFYPEER, true);
-	curl_setopt($curl_get_link_res, CURLOPT_SSL_VERIFYHOST, true);
-	curl_setopt($ch,  CURLOPT_FOLLOWLOCATION, 1);//For 302
-	curl_setopt($curl_get_link_res, CURLOPT_HEADER, 1);
-	curl_setopt($curl_get_link_res, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($curl_get_link_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL MicroMessenger");//Use MicroMessenger user-agent
-	//存储字符
-	$curl_get_link_res_data = trim(trim(curl_exec($curl_get_link_res)), "\xEF\xBB\xBF");
-	$curl_get_link_res_url = trim(trim(curl_getinfo($curl_get_link_res)["redirect_url"]));
-	//关闭CURL
-	curl_close($curl_get_link_res);
+	$JSJApiPay_WeChat_Pay_QRCode_Native_config['jsj_order_id'] = trim($curl_create_order_res_data);
+	
+	//组合订单连接换取微信支付链接
+	$curl_get_link_res_url=$JSJApiPay_WeChat_Pay_QRCode_Native_config['api_url_order'].$JSJApiPay_WeChat_Pay_QRCode_Native_config['jsj_order_id'];
 
 	//获取微信二维码链接
 	$curl_create_qrcode_res = curl_init();
@@ -179,20 +134,21 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 	curl_setopt($curl_create_qrcode_res, CURLOPT_SSL_VERIFYPEER, true);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_SSL_VERIFYHOST, true);
 	curl_setopt($ch,  CURLOPT_FOLLOWLOCATION, 1);//For 302
-	curl_setopt($curl_create_qrcode_res, CURLOPT_HEADER, 1);
+	curl_setopt($curl_create_qrcode_res, CURLOPT_HEADER, 0);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($curl_create_qrcode_res, CURLOPT_USERAGENT, "WHMCS_PHP_CURL MicroMessenger");//Use MicroMessenger user-agent
 	//存储字符
 	$curl_create_qrcode_res_data = trim(trim(curl_exec($curl_create_qrcode_res)), "\xEF\xBB\xBF");
-	$curl_create_qrcode_res_url = trim(trim(curl_getinfo($curl_create_qrcode_res)["redirect_url"]));
 	//关闭CURL
 	curl_close($curl_create_qrcode_res);
+	//清理微信链接字段
+	$curl_create_qrcode_res_url=trim($curl_create_qrcode_res_data);
 
 	//tooltip提示，判断是否为移动端
 	if (isMobile()) {
-		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用微信扫码支付，请使用微信扫一扫支付。</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_Native_IMG" data-toggle="tooltip" data-placement="top" title="<h5>欢迎使用微信扫码支付，请截图/保存二维码到手机，使用微信扫一扫（从相册选取）</h5>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	} else {
-		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
+		$tooltip_QRCode_info='<div id="JSJApiPay_WeChat_Pay_QRCode_Native_IMG" data-toggle="tooltip" data-placement="left" title="<h4>欢迎使用微信扫码支付</h4>" style="border: 1px solid #AAA;border-radius: 4px;overflow: hidden;padding-top: 5px;">';
 	}
 
 	$html_code = <<<HTML_CODE
@@ -210,7 +166,7 @@ function JSJApiPay_WeChat_Pay_QRCode_link($params) {
 </div>
 <button type="button" class="btn btn-success btn-block"  style="margin-top: 10px;" onclick="location.reload();">刷新二维码</button>
 <script>
-	jQuery('#JSJApiPay_WeChat_Pay_QRCode_IMG').qrcode({
+	jQuery('#JSJApiPay_WeChat_Pay_QRCode_Native_IMG').qrcode({
 		width	:	230,
 		height	:	230,
 		text	:	'{$curl_create_qrcode_res_url}'
@@ -254,12 +210,12 @@ jQuery(document).ready(function() {
 HTML_CODE;
 
 	if ($debug) {
-		$msg="[YM01ApiPay_WeChat_Pay_QRCode]订单: $invoiceid 生成支付表单 $html_code";
+		$msg="[YM01ApiPay_WeChat_Pay_QRCode_Native]订单: $invoiceid 生成支付表单 $html_code";
 		JSJApiPay_logResult($msg);
 	}
 	$no_service_provider_in_error_message = "false"; //如不希望在错误信息中展示金沙江连接，请设置为true。
 	//return $html_code;
-	if (stristr($curl_create_qrcode_res_url, 'https://open.weixin.qq.com/connect/oauth2/authorize')) {
+	if (stristr($curl_create_qrcode_res_url, 'weixin://')) {
 		return $html_code;
 	} elseif (stristr($curl_create_qrcode_res_url, '金额变动无法支付')) {
 		return "<center><b>由于账单金额被更改，二维码获取失败。</b></center><button type=\"button\" class=\"btn btn-success btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./submitticket.php?from=payment_failed_amount_changed');\">联系客服拆分账单(推荐)</button><button type=\"button\" class=\"btn btn-warning btn-block\" style=\"margin-top: 10px;\" onclick=\"javascript:window.open('./clientarea.php?action=addfunds&from=payment_failed_amount_changed');\">自助充值相应余额支付</button>";
